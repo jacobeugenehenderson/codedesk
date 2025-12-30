@@ -79,32 +79,6 @@ const CODEDESK_BOOTSTRAP_SESSION_KEY = "codedesk_bootstrap_session_v1";
   };
 })();
 
-// --- Dark/Light toggle + persistence ---
-const root   = document.documentElement;
-const toggle = document.getElementById('themeToggle');
-
-function setTheme(mode) {
-  const r = document.documentElement;
-  const isDark = (mode === true) || (mode === 'dark') ||
-                 (mode == null && r.classList.contains('dark'));
-  r.classList.toggle('dark',  isDark);
-  r.classList.toggle('light', !isDark);
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-}
-
-// Allow any existing button to act as the theme toggle
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-theme-toggle], .js-theme-toggle');
-  if (!btn) return;
-  e.preventDefault();
-  setTheme(!document.documentElement.classList.contains('dark')); // uses established logic
-});
-
-const mq = window.matchMedia('(prefers-color-scheme: dark)');
-mq.addEventListener?.('change', (e) => {
-  if (!('theme' in localStorage)) setTheme(e.matches);
-});
-
 /* === Wheel scroll (independent, app-level) ============================
    Fix: some wrappers end up "locking" scroll so wheel does nothing.
    Strategy: on wheel, find nearest scrollable ancestor and scroll it.
@@ -343,62 +317,6 @@ function wireFontSelect(){
     }
 
     // run after DOM loads
-
-    /* === Section color themes (Caption / Design / Mechanicals / Finish) === */
-    /* Uses body.theme--* classes defined in theme.css; no HTML changes needed. */
-    function applySectionTheme(step) {
-      const body = document.body;
-      if (!body) return;
-
-      const themeClasses = [
-        'theme--caption',
-        'theme--design',
-        'theme--mechanical',
-        'theme--finish'
-      ];
-
-      body.classList.remove(...themeClasses);
-
-      switch (step) {
-        case 'caption':
-          body.classList.add('theme--caption');
-          break;
-        case 'design':
-          body.classList.add('theme--design');
-          break;
-        case 'mechanicals':
-          body.classList.add('theme--mechanical');
-          break;
-        case 'finish':
-          body.classList.add('theme--finish');
-          break;
-        default:
-          // Fallback: rely on base tokens; no extra class.
-          break;
-      }
-    }
-
-    function wireSectionThemes() {
-      if (wireSectionThemes._done) return;
-
-      const cards = document.querySelectorAll('.step-card[data-step]');
-      if (!cards.length) return;
-
-      cards.forEach(card => {
-        const step = card.getAttribute('data-step');
-        const header = card.querySelector('.step-header');
-        if (!step || !header) return;
-
-        // On header click, adopt that section's theme.
-        header.addEventListener('click', () => applySectionTheme(step), { passive: true });
-      });
-
-      // Initial theme: use currently open step if present; otherwise Caption.
-      const open = document.querySelector('.step-card.is-open[data-step]');
-      applySectionTheme(open ? open.getAttribute('data-step') : 'caption');
-
-      wireSectionThemes._done = true;
-    }
     
     // -------- Emoji picker (catalog + search) --------
     const EMOJI_BIG = ["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","🙂","🙃","☺️","😋","😌","😍","🥰","😘","😗","😙","😚","😜","🤪","😝","😛","🤑","🤗","🤭","🤫","🤔","🤐","🤨","😐","😑","😶","😶‍🌫️","😏","😒","🙄","😬","🤥","😴","😪","😮‍💨","😌","😮","😯","😲","😳","🥵","🥶","😱","😨","😰","😥","😢","😭","😤","😡","😠","🤬","🤯","😷","🤒","🤕","🤢","🤮","🤧","🥴","😵","😵‍💫","🤠","🥳","😎","🤓","🧐","😕","🫤","😟","🙁","☹️","🤷","🤷‍♂️","🤷‍♀️","💪","👋","🤝","👍","👎","👏","🙌","👐","🤲","🤟","✌️","🤘","👌","🤌","🤏","👈","👉","☝️","👆","👇","✋","🖐️","🖖","✊","👊","💋","❤️","🩷","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❤️‍🔥","❤️‍🩹","💕","💞","💓","💗","💖","💘","💝","💟","🌈","🏳️‍🌈","🏳️‍⚧️","⭐️","✨","🔥","⚡️","💥","🌟","☀️","🌙","🪐","🌍","🌎","🌏","🌊","⛰️","🏙️","🗽","🚗","✈️","🚀","⌚️","📱","💻","🖥️","🖨️","🎧","🎤","🎬","📷","📸","📝","📚","🔖","📎","🔬","🔧","⚙️","🍎","🍉","🍇","🍓","🍑","🍍","🥑","🌮","🍣","🍰","🍫","🍩","🍿","🍺","🍷","🍸","🎉","🎊","🎈","🎮","🎯","🏆","🏵️","✊🏿","✊🏾","✊🏽","✊🏼","✊🏻","👍🏿","👍🏾","👍🏽","👍🏼","👍🏻","👋🏿","👋🏾","👋🏽","👋🏼","👋🏻","🏁","🚩","🏳️","🏴","🏳️‍🌈","🏳️‍⚧️","🇺🇸","🇨🇦","🇬🇧","🇫🇷","🇩🇪","🇮🇹","🇪🇸","🇧🇷","🇯🇵","🇰🇷","🇨🇳","🇮🇳","🇿🇦"];
