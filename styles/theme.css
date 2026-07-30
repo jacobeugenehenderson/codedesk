@@ -5121,3 +5121,96 @@ body.codedesk-embed-mode #qrType {
   visibility: visible;
   pointer-events: auto;
 }
+
+/* Caption is a <textarea>, so two rules make it diverge from the <input>
+   beside it: textarea.fldInp forces min-height 1.5x the control height, and the
+   legacy #campaign rule (written for the old Caption drawer) overrides padding,
+   line-height and radius. Restate .fldInp's own values so the two fields match.
+   #id .class outranks both #campaign and textarea.fldInp. */
+/* =====================================================================
+   Generated field rows — sizing fix
+   ---------------------------------------------------------------------
+   Two element-level rules force these inputs to
+   calc(var(--density-control-h) * 0.9), about 28px. .fldInp then asks for
+   9px padding top and bottom around a ~16px line: 34px of content in a
+   28px box, so every generated field clipped the bottom of its own text.
+   Element selectors lose to .fldRow > .fldInp, so the height goes back to
+   auto with the old fixed height as a floor. The radius is restated
+   because something later zeroes it, leaving these boxes square while
+   every other control on the page is round.
+
+   This is not embed-specific — it applies in normal use too, where the
+   same fields clip identically.
+   ===================================================================== */
+.fldRow > .fldInp {
+  height: auto;
+  min-height: var(--density-control-h);
+  border-radius: var(--ascend-control-radius, 10px);
+}
+
+/* Caption is a <textarea>, and the legacy #campaign rule — written for the
+   old Caption drawer — sets its own height, line-height and padding. Id
+   beats class, so restate .fldInp's values here to match the field above. */
+#embedCaptionGroup .fldInp {
+  height: auto;
+  min-height: var(--density-control-h);
+  /* The same padding and font the input beside it resolves to, so the two
+     boxes come out the same height rather than three pixels apart. */
+  padding: 0.5rem 0.65rem;
+  font: 500 0.86rem/1.25 var(--font-family, system-ui);
+  border-radius: var(--ascend-control-radius, 10px);
+  resize: none;
+  overflow: hidden;
+}
+
+/* The Advanced disclosure holding the UTM parameters. Sits last in the panel,
+   below the caption — it is the thing reached for least. No display on the
+   summary: summary{display:flex} breaks <details> in Safari while looking
+   correct in Chrome, so the marker is swapped rather than the box model. */
+.embed-advanced {
+  border-top: 1px solid color-mix(in oklab, var(--ui-stroke) 70%, transparent);
+  padding-top: .85rem;
+  margin-top: .25rem;
+}
+
+.embed-advanced > summary {
+  position: relative;
+  cursor: pointer;
+  padding-left: 1.1rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--md-sys-color-on-surface) 55%, transparent);
+  user-select: none;
+  list-style: none;
+  transition: color var(--motion-duration-1, .15s) var(--motion-ease, ease);
+}
+
+/* Replace the default triangle with one that can be animated. */
+.embed-advanced > summary::-webkit-details-marker { display: none; }
+
+.embed-advanced > summary::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: .5rem;
+  height: .5rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-65%) rotate(-45deg);
+  transition: transform var(--motion-duration-1, .15s) var(--motion-ease, ease);
+}
+
+.embed-advanced[open] > summary::before {
+  transform: translateY(-35%) rotate(45deg);
+}
+
+.embed-advanced > summary:hover {
+  color: var(--md-sys-color-on-surface);
+}
+
+.embed-advanced[open] > summary {
+  margin-bottom: .85rem;
+}

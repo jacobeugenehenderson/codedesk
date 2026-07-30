@@ -1240,7 +1240,9 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
     if (window.__CODEDESK_EMBED_LANDING_APPLIED__) return;
 
     const LANDING_URL     = 'www.okQRal.com';
-    const LANDING_CAPTION = 'okQRal.com';
+    // Not the URL again — the code already says where it goes. The caption's
+    // job here is to show what a caption is for. (#campaign caps at 20 chars.)
+    const LANDING_CAPTION = 'Scan me';
     const MAX_FRAMES      = 60; // ~1s at 60fps; the field appears in the first few
 
     let frames = 0;
@@ -1281,20 +1283,21 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       try {
         if (typeof window.codedeskSetLocked === 'function') window.codedeskSetLocked(false);
 
-        const captionCard = document.querySelector('#stepper .step-card[data-step="caption"]');
-        const captionBtn  = captionCard && captionCard.querySelector('[data-step-toggle]');
-        const panel       = captionCard && captionCard.querySelector('[data-step-panel]');
+        // Mechanicals, which now carries the URL and the caption both.
+        const card = document.querySelector('#stepper .step-card[data-step="mechanicals"]');
+        const btn   = card && card.querySelector('[data-step-toggle]');
+        const panel = card && card.querySelector('[data-step-panel]');
         const isOpen = () => !!(panel && getComputedStyle(panel).display !== 'none');
 
-        (function openCaption(triesLeft){
-          if (!captionBtn || !panel || isOpen()) return;
-          captionBtn.click();
+        (function openContentDrawer(triesLeft){
+          if (!btn || !panel || isOpen()) return;
+          btn.click();
           if (isOpen()) return;
           if (triesLeft <= 0) {
-            console.warn('EMBED landing: Caption would not open');
+            console.warn('EMBED landing: content drawer would not open');
             return;
           }
-          requestAnimationFrame(() => openCaption(triesLeft - 1));
+          requestAnimationFrame(() => openContentDrawer(triesLeft - 1));
         })(5);
       } catch (e) {
         console.warn('EMBED landing: could not open Caption', e);
@@ -1303,6 +1306,112 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       try { if (typeof window.render === 'function') window.render(); } catch (e) {}
       console.log('🔧 EMBED MODE — landing state applied');
     })();
+  }
+
+  // =====================================================
+  // EMBED MODE: one content drawer, tracking folded away
+  // =====================================================
+  // Framed, the four drawers split things that belong together: the URL lived in
+  // Mechanicals, the words printed under it lived in Caption, and a visitor had
+  // to open two drawers to change the two things they would actually change.
+  // Caption moves in beside the payload, Mechanicals leads, and the UTM
+  // parameters — the only fields here nobody touches on a first look — fold into
+  // an Advanced disclosure rather than being removed.
+  function codedeskGroupAdvancedFields(){
+    const details = document.getElementById('detailsPanel');
+    const mechPanel = document.querySelector(
+      '#stepper .step-card[data-step="mechanicals"] [data-step-panel]');
+    if (!details || !mechPanel) return;
+
+    // Rebuilt from scratch each time rather than skipped-if-present: the box
+    // lives outside #detailsPanel so it can sit last, and renderTypeForm empties
+    // that panel on every type change, so a surviving box would hold rows that
+    // no longer belong to the current type.
+    const stale = document.getElementById('embedAdvanced');
+    if (stale) stale.remove();
+
+    // Tracking parameters only. A general "first field is primary" rule would
+    // bury the WiFi password and most of a contact card.
+    const rows = [...details.querySelectorAll('.fldRow')]
+      .filter((row) => row.querySelector('[id^="utm"]'));
+    if (!rows.length) return;
+
+    const box = document.createElement('details');
+    box.id = 'embedAdvanced';
+    box.className = 'embed-advanced';
+
+    const summary = document.createElement('summary');
+    summary.textContent = 'Advanced';
+    // No display on the summary: summary{display:flex} breaks <details> in
+    // Safari while looking fine in Chrome.
+    box.appendChild(summary);
+
+    rows.forEach((row) => box.appendChild(row));
+
+    // Last in the panel, after the caption — it is the thing you reach for least.
+    mechPanel.appendChild(box);
+  }
+
+  function codedeskRestructureForEmbed(){
+    const stepper = document.getElementById('stepper');
+    if (!stepper) return;
+
+    const mechCard  = stepper.querySelector('.step-card[data-step="mechanicals"]');
+    const capCard   = stepper.querySelector('.step-card[data-step="caption"]');
+    const mechPanel = mechCard && mechCard.querySelector('[data-step-panel]');
+
+    // Caption's fields move into the Mechanicals panel but stay outside
+    // #detailsPanel, which renderTypeForm empties and rebuilds on every type
+    // change — inside it they would vanish the first time someone picked WiFi.
+    const headline = document.getElementById('campaign');
+    if (capCard && mechPanel && headline) {
+      // Rebuilt in the markup buildField() generates — div.fldRow > label.fldLbl
+      // + .fldInp — so the caption matches the URL field by construction rather
+      // than by a stylesheet patch chasing it. Its original markup is Tailwind
+      // utility classes and a .sr-only span, which lays out differently inside
+      // this panel: the span is absolutely positioned, so the field landed in
+      // the narrow label column of the panel's two-column field grid.
+      const row = document.createElement('div');
+      row.id = 'embedCaptionGroup';
+      row.className = 'fldRow';
+
+      const label = document.createElement('label');
+      label.className = 'fldLbl';
+      label.setAttribute('for', 'campaign');
+      label.textContent = 'Caption';
+
+      headline.className = 'fldInp';
+      headline.rows = 1;
+
+      row.appendChild(label);
+      row.appendChild(headline);
+      mechPanel.appendChild(row);
+
+      // The card is hidden rather than removed, which takes the drawer out of
+      // the stepper while leaving #captionBody in the document. Body is dropped
+      // from view — optional, empty, and framed it is a second box asking for
+      // something nobody came here to write — but render() reads
+      // val('captionBody'), and a field that still exists cannot surprise it.
+      capCard.style.display = 'none';
+    }
+
+    if (mechCard) stepper.insertBefore(mechCard, stepper.firstChild);
+
+    // The fields are already on the page by now; later type changes rebuild them,
+    // so the regrouping has to run again each time renderTypeForm does.
+    codedeskGroupAdvancedFields();
+
+    if (typeof window.renderTypeForm === 'function' && !window.__CODEDESK_EMBED_RTF_WRAPPED__) {
+      window.__CODEDESK_EMBED_RTF_WRAPPED__ = true;
+      const original = window.renderTypeForm;
+      window.renderTypeForm = function(){
+        const out = original.apply(this, arguments);
+        try { codedeskGroupAdvancedFields(); } catch (e) {
+          console.warn('EMBED advanced grouping failed', e);
+        }
+        return out;
+      };
+    }
   }
 
   function boot(){
@@ -1384,7 +1493,12 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
           srLabel.setAttribute('for', 'qrType');
           srLabel.textContent = 'Code type';
 
-          typeSelect.classList.add('topctl', 'topctl--chev', 'text-sm');
+          // .topctl only — deliberately NOT .topctl--chev. That class draws its
+          // chevron with ::after, and a <select> renders pseudo-elements
+          // inconsistently: here it painted one on top of the background-image
+          // chevron, giving two arrows and overlapping text. One chevron, drawn
+          // the one way a select reliably supports.
+          typeSelect.classList.add('topctl', 'text-sm');
           pill.appendChild(srLabel);
           pill.appendChild(typeSelect);
           mechHeader.insertBefore(pill, mechHeader.querySelector('#eccPill'));
@@ -1394,6 +1508,8 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
 
         const headerBar = document.querySelector('header.header-bar');
         if (headerBar) headerBar.style.display = 'none';
+
+        codedeskRestructureForEmbed();
 
         codedeskApplyEmbedLandingState();
       } catch (embedUiErr) {
