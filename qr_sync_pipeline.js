@@ -1272,12 +1272,30 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       // Open Caption by clicking its own toggle, so the accordion bookkeeping
       // (aria-expanded, is-open, the stepper's mode classes) is done by the code
       // that owns it. Setting display directly would drift from that logic.
+      //
+      // Two things make a single click unreliable. The accordion handler ignores
+      // clicks while the stepper is locked, and boot order does not guarantee the
+      // unlock has landed by the time this runs — a swallowed click leaves every
+      // drawer shut and looks like nothing happened. So ask for the unlock
+      // explicitly, then confirm the panel actually opened instead of assuming.
       try {
+        if (typeof window.codedeskSetLocked === 'function') window.codedeskSetLocked(false);
+
         const captionCard = document.querySelector('#stepper .step-card[data-step="caption"]');
         const captionBtn  = captionCard && captionCard.querySelector('[data-step-toggle]');
         const panel       = captionCard && captionCard.querySelector('[data-step-panel]');
-        const alreadyOpen = !!(panel && getComputedStyle(panel).display !== 'none');
-        if (captionBtn && !alreadyOpen) captionBtn.click();
+        const isOpen = () => !!(panel && getComputedStyle(panel).display !== 'none');
+
+        (function openCaption(triesLeft){
+          if (!captionBtn || !panel || isOpen()) return;
+          captionBtn.click();
+          if (isOpen()) return;
+          if (triesLeft <= 0) {
+            console.warn('EMBED landing: Caption would not open');
+            return;
+          }
+          requestAnimationFrame(() => openCaption(triesLeft - 1));
+        })(5);
       } catch (e) {
         console.warn('EMBED landing: could not open Caption', e);
       }
@@ -1330,6 +1348,52 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
         // in qr_app-bootstrapper.js, and embed mode writes no working file.
         const filenameSection = document.getElementById('codedeskFilenameSection');
         if (filenameSection) filenameSection.style.display = 'none';
+
+        // The header holds a wordmark and the type selector. Framed, the
+        // wordmark is worse than redundant: it links to ./index.html, which
+        // reloads the embed and throws away whatever the visitor just made, and
+        // the page around it already says what this is.
+        //
+        // The selector is worth keeping, so it moves rather than goes. Its home
+        // is Mechanicals — #detailsPanel, where the type-specific fields render,
+        // is already inside that drawer, so the control was separated from its
+        // own fields. It sits in the header row, not the panel, so the range of
+        // types stays visible without opening anything. Design's font select is
+        // the same pattern, and .topctl/.topctl--chev is the same on-card style
+        // it uses; the header's white-on-navy rules stop applying by descent,
+        // which is what we want on a white card.
+        // Rebuilt as a pill, matching #fontPill in Design exactly: a .ecc-pill
+        // group wrapping an sr-only label and the select. The pill is the part
+        // that carries the look and the open-only visibility; .topctl--chev
+        // alone would not, because it draws its chevron with ::after and a
+        // <select> does not render pseudo-elements.
+        const typeSelect = document.getElementById('qrType');
+        const mechHeader = document.querySelector(
+          '#stepper .step-card[data-step="mechanicals"] .step-header-wrap');
+        if (typeSelect && mechHeader) {
+          const oldWrap = typeSelect.closest('label');
+
+          const pill = document.createElement('div');
+          pill.id = 'typePill';
+          pill.className = 'ecc-pill';
+          pill.setAttribute('role', 'group');
+          pill.setAttribute('aria-label', 'Code type');
+
+          const srLabel = document.createElement('label');
+          srLabel.className = 'text-sm sr-only';
+          srLabel.setAttribute('for', 'qrType');
+          srLabel.textContent = 'Code type';
+
+          typeSelect.classList.add('topctl', 'topctl--chev', 'text-sm');
+          pill.appendChild(srLabel);
+          pill.appendChild(typeSelect);
+          mechHeader.insertBefore(pill, mechHeader.querySelector('#eccPill'));
+
+          if (oldWrap && oldWrap.parentNode) oldWrap.parentNode.removeChild(oldWrap);
+        }
+
+        const headerBar = document.querySelector('header.header-bar');
+        if (headerBar) headerBar.style.display = 'none';
 
         codedeskApplyEmbedLandingState();
       } catch (embedUiErr) {

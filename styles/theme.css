@@ -5093,3 +5093,31 @@ textarea.fldInp {
   font-style: italic;
   padding: 0.5rem 0;
 }
+
+/* =====================================================================
+   EMBED MODE — type selector relocated out of the header
+   ---------------------------------------------------------------------
+   #qrType carries an unscoped rule painting --chev-icon, a white SVG that
+   reads correctly only on the dark header bar. Moved onto a white card it
+   would be an invisible chevron sitting under the one .topctl--chev draws.
+   Specificity has to beat the bare #qrType rule, hence the body prefix.
+   ===================================================================== */
+body.codedesk-embed-mode #qrType {
+  /* --chev-icon is white: correct on the dark header bar, invisible on a card.
+     Same path, light-card ink. It cannot use .topctl--chev like its neighbours
+     because that draws with ::after, which a <select> does not render. */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'><path d='M5.23 7.21a.75.75 0 011.06.02L10 10.17l3.71-2.94a.75.75 0 111.04 1.08l-4.23 3.35a.75.75 0 01-.96 0L5.21 8.31a.75.75 0 01.02-1.1z'/></svg>");
+}
+
+/* Hidden while Mechanicals is closed, exactly as #eccPill and Design's
+   #fontPill are. A control sitting in a shut drawer's header reads as a
+   stray button, which is what it looked like before this rule. */
+.step-card[data-step="mechanicals"]:not(.is-open) #typePill {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.step-card[data-step="mechanicals"].is-open #typePill {
+  visibility: visible;
+  pointer-events: auto;
+}
