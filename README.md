@@ -40,6 +40,67 @@ difference is the two `<link>` tags that no longer exist.
 If the portal's stylesheets change, this does not. That is the intended trade —
 this is Codedesk's own CSS now.
 
+**The shape tokens are declared here now.** `--shape-corner-md`, `-sm` and
+`-full` were referenced throughout but never defined — only `-lg` was — which is
+why every control on the page rendered square despite carrying `rounded-md`.
+`border-radius: var(--shape-corner-md)` with no fallback outranks `.rounded-md`
+on specificity, and *then* the undefined var makes the declaration invalid at
+computed-value time, resetting the radius to its initial `0`. The utility never
+applies and the rule that beat it paints nothing. Worth remembering: an
+undefined custom property does not fall through to the next rule, it wins and
+then evaporates.
+
+Related, same era: two element-level rules pin form controls to about 28px while
+their padding and line-height need about 36, so fields clipped the bottom of
+their own text. That height is a floor now, not a ceiling.
+
+## Two modes
+
+`?mode=embed` is a different product from the same code. Normal use is the
+Drive-backed tool: name a working file, press Enter, the workspace unlocks, ✨
+writes the file. Framed, none of that exists — sync is off and ✨ downloads a
+PNG — so the embed drops the ceremony and opens on a finished code instead.
+
+| | Normal | `?mode=embed` |
+|---|---|---|
+| Filename ceremony | names a working file, gates the drawers | none — the gate is pre-satisfied |
+| Header | wordmark + type select | hidden; the select moves into **Code** |
+| Drawers | Caption · Design · Mechanicals · Create working file | **Code** · Design · Download PNG |
+| Opens on | everything closed, locked | **Code** open, URL and caption filled |
+
+**The embed is not a stripped-down build.** Every type is still available and
+nothing is deleted — the UTM parameters fold into an *Advanced* disclosure, and
+the caption Body field is hidden rather than removed, because `render()` reads
+`val('captionBody')`.
+
+Two rules keep this maintainable:
+
+**Presentation lives in the stylesheet**, under `body.codedesk-embed-mode`.
+Setting `.style.display` from script is an inline style by another name and is
+invisible to anyone reading the CSS. JavaScript does only what CSS cannot
+express: moving nodes between parents, and seeding values.
+
+**The gate is satisfied, not bypassed.** `qr_app-bootstrapper.js` sets the same
+two flags a genuine return-visit sets, before `qr_sync_pipeline.js` wires the
+gate, so the existing already-accepted path unlocks, renders and wires the
+accordion. One unlock path in the codebase rather than a second to keep in step.
+
+Traps, each of which was a real bug here:
+
+- **`.topctl--chev` draws its chevron with `::after`, and a `<select>` renders
+  pseudo-elements inconsistently.** It painted on top of the `background-image`
+  chevron: two arrows and overlapping text. Selects get one chevron, from
+  `background-image`.
+- **The accordion ignores clicks while the stepper is locked**, and boot order
+  does not guarantee the unlock has landed. Opening a drawer on load must
+  confirm the panel actually opened rather than assume the click took.
+- **`#detailsPanel` is emptied and rebuilt on every type change.** Anything
+  parked inside it — the caption field, the Advanced box — disappears the first
+  time someone picks WiFi. Both live outside it; Advanced is rebuilt per render.
+- **`summary { display: flex }` breaks `<details>` in Safari** while looking
+  correct in Chrome. The Advanced disclosure swaps its marker, never its
+  display.
+
 ## Embedding
 
 `embed-height.js` is loaded last and reports
