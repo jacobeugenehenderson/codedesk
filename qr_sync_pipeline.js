@@ -1289,16 +1289,23 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
         const panel = card && card.querySelector('[data-step-panel]');
         const isOpen = () => !!(panel && getComputedStyle(panel).display !== 'none');
 
-        (function openContentDrawer(triesLeft){
-          if (!btn || !panel || isOpen()) return;
-          btn.click();
-          if (isOpen()) return;
-          if (triesLeft <= 0) {
-            console.warn('EMBED landing: content drawer would not open');
-            return;
-          }
-          requestAnimationFrame(() => openContentDrawer(triesLeft - 1));
-        })(5);
+        // Re-asserted over about a second rather than clicked once, because
+        // something legitimately closes it afterwards: codedeskSetLocked()
+        // shuts every drawer as part of its job, and the filename gate calls it
+        // while wiring. Whether that lands before or after this runs depends on
+        // boot timing, so a single click is a coin toss — on a lazily loaded
+        // frame it came up tails and the embed showed three shut drawers.
+        //
+        // Only ever clicks when the panel is closed, so it cannot toggle a
+        // drawer the visitor has just opened, and it stops asserting after a
+        // second, so it cannot fight them either.
+        if (btn && panel) {
+          const ensureOpen = () => { if (!isOpen()) btn.click(); };
+          [0, 50, 150, 300, 600, 1000].forEach((delay) => setTimeout(ensureOpen, delay));
+          setTimeout(() => {
+            if (!isOpen()) console.warn('EMBED landing: content drawer would not stay open');
+          }, 1200);
+        }
       } catch (e) {
         console.warn('EMBED landing: could not open Caption', e);
       }
