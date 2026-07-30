@@ -1225,6 +1225,68 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
 
 /* === DOM READY (boot) ========================================= */
 (function(){
+  // =====================================================
+  // EMBED MODE: the landing state
+  // =====================================================
+  // Embed mode opens on a finished code rather than an empty one, because the
+  // page around it claims the code goes to okqral.com and a blank black-and-
+  // white square makes that page a liar. Caption starts open so the first thing
+  // visible is an editable field, not four closed drawers.
+  //
+  // The type fields (#urlData among them) are built from the manifest at render
+  // time, so this cannot run straight through — it waits for the field to exist,
+  // for a bounded number of frames, and gives up quietly rather than spinning.
+  function codedeskApplyEmbedLandingState(){
+    if (window.__CODEDESK_EMBED_LANDING_APPLIED__) return;
+
+    const LANDING_URL     = 'www.okQRal.com';
+    const LANDING_CAPTION = 'okQRal.com';
+    const MAX_FRAMES      = 60; // ~1s at 60fps; the field appears in the first few
+
+    let frames = 0;
+    const setValue = (node, value) => {
+      if (!node || String(node.value || '').trim() !== '') return false;
+      node.value = value;
+      // The app listens for input; assigning .value alone would leave state stale.
+      node.dispatchEvent(new Event('input',  { bubbles: true }));
+      node.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    };
+
+    (function attempt(){
+      const urlField = document.getElementById('urlData');
+      if (!urlField) {
+        if (++frames > MAX_FRAMES) {
+          console.warn('EMBED landing: #urlData never appeared; leaving the app as it boots');
+          return;
+        }
+        requestAnimationFrame(attempt);
+        return;
+      }
+
+      window.__CODEDESK_EMBED_LANDING_APPLIED__ = true;
+
+      setValue(urlField, LANDING_URL);
+      setValue(document.getElementById('campaign'), LANDING_CAPTION);
+
+      // Open Caption by clicking its own toggle, so the accordion bookkeeping
+      // (aria-expanded, is-open, the stepper's mode classes) is done by the code
+      // that owns it. Setting display directly would drift from that logic.
+      try {
+        const captionCard = document.querySelector('#stepper .step-card[data-step="caption"]');
+        const captionBtn  = captionCard && captionCard.querySelector('[data-step-toggle]');
+        const panel       = captionCard && captionCard.querySelector('[data-step-panel]');
+        const alreadyOpen = !!(panel && getComputedStyle(panel).display !== 'none');
+        if (captionBtn && !alreadyOpen) captionBtn.click();
+      } catch (e) {
+        console.warn('EMBED landing: could not open Caption', e);
+      }
+
+      try { if (typeof window.render === 'function') window.render(); } catch (e) {}
+      console.log('🔧 EMBED MODE — landing state applied');
+    })();
+  }
+
   function boot(){
     console.log('🚀 boot() fired', { readyState: document.readyState });
 
@@ -1263,6 +1325,13 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
 
         // Disable beforeunload warning (no working file to lose)
         window.__CODEDESK_EMBED_NO_WARN__ = true;
+
+        // The filename prompt has nothing left to ask. The gate was satisfied
+        // in qr_app-bootstrapper.js, and embed mode writes no working file.
+        const filenameSection = document.getElementById('codedeskFilenameSection');
+        if (filenameSection) filenameSection.style.display = 'none';
+
+        codedeskApplyEmbedLandingState();
       } catch (embedUiErr) {
         console.warn('EMBED MODE UI setup error:', embedUiErr);
       }

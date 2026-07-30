@@ -60,6 +60,18 @@ const CODEDESK_BOOTSTRAP_SESSION_KEY = "codedesk_bootstrap_session_v1";
   const isEmbedMode = (mode === "embed");
   if (isEmbedMode) {
     window.CODEDESK_EMBED_MODE = true;
+
+    // No filename ceremony in embed mode. The ceremony exists to name a working
+    // file before it is written to Drive/FileRoom, and embed mode never writes
+    // one — ✨ downloads a PNG instead. Asking for a name first is a locked door
+    // in front of an empty room.
+    //
+    // These are the two flags a genuine return-visit sets. Declaring them here,
+    // before qr_sync_pipeline.js wires the gate, makes the gate take its own
+    // already-accepted path: unlock, render, wire the accordion. That leaves one
+    // unlock path in the codebase rather than a second one to keep in step.
+    window.__CODEDESK_FILENAME_ACCEPTED__ = true;
+    window.__CODEDESK_SETUP_DONE__ = true;
   }
 
   // Working-file open path (from hopper)
