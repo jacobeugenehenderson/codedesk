@@ -178,6 +178,24 @@
 --ascend-control-radius: 10px;
 --ascend-control-padding-y: 0.45rem;
 --ascend-control-padding-x: 0.7rem;
+
+/* --------------------------------------------------------------------
+   Shape tokens. Referenced throughout but never declared, which is why
+   every control on the page rendered square.
+
+   border-radius: var(--shape-corner-md), with no fallback, beats
+   .rounded-md on specificity — and only afterwards does the undefined
+   var make the declaration invalid at computed-value time, which resets
+   border-radius to its initial 0. The utility never gets a chance, and
+   the rule that outranked it paints nothing.
+
+   Five rules use md, one sm, one full; only --shape-corner-lg was ever
+   declared. md is set to match --ascend-control-radius so the controls
+   agree with each other.
+   -------------------------------------------------------------------- */
+--shape-corner-sm: 6px;
+--shape-corner-md: 10px;
+--shape-corner-full: 9999px;
 }
 
 /* Global */
@@ -5128,6 +5146,27 @@ body.codedesk-embed-mode #qrType {
    line-height and radius. Restate .fldInp's own values so the two fields match.
    #id .class outranks both #campaign and textarea.fldInp. */
 /* =====================================================================
+   EMBED MODE — what the frame does not show
+   ---------------------------------------------------------------------
+   Presentation belongs here rather than in JS setting .style.display,
+   which is an inline style by another name and invisible to anyone
+   reading the stylesheet.
+
+   The header: a wordmark linking to ./index.html, which inside a frame
+   reloads the embed and discards the visitor's work, plus a type select
+   that JS relocates into the Code drawer.
+   The filename prompt: names a working file that embed mode never writes.
+   The Caption card: its headline is moved into the Code drawer; the card
+   stays in the document so #captionBody still exists for render(), which
+   reads val('captionBody').
+   ===================================================================== */
+body.codedesk-embed-mode header.header-bar,
+body.codedesk-embed-mode #codedeskFilenameSection,
+body.codedesk-embed-mode #stepper .step-card[data-step="caption"] {
+  display: none;
+}
+
+/* =====================================================================
    Generated field rows — sizing fix
    ---------------------------------------------------------------------
    Two element-level rules force these inputs to
@@ -5146,6 +5185,22 @@ body.codedesk-embed-mode #qrType {
   height: auto;
   min-height: var(--density-control-h);
   border-radius: var(--ascend-control-radius, 10px);
+}
+
+/* The same fixed height squashes the hand-written controls in Design, which
+   are not .fldInp: a select with py-2 padding and a ~20px line needs about
+   36px and was given 28, so "Square" and "Shape" lost their descenders. The
+   height becomes a floor rather than a ceiling. #stepper outranks the bare
+   element selectors that set it. */
+#stepper select,
+#stepper input[type="text"],
+#stepper input[type="url"],
+#stepper input[type="email"],
+#stepper input[type="number"],
+#stepper input[type="search"],
+#stepper input[type="password"] {
+  height: auto;
+  min-height: var(--density-control-h);
 }
 
 /* Caption is a <textarea>, and the legacy #campaign rule — written for the

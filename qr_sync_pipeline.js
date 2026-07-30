@@ -1387,15 +1387,24 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       row.appendChild(headline);
       mechPanel.appendChild(row);
 
-      // The card is hidden rather than removed, which takes the drawer out of
-      // the stepper while leaving #captionBody in the document. Body is dropped
-      // from view — optional, empty, and framed it is a second box asking for
-      // something nobody came here to write — but render() reads
-      // val('captionBody'), and a field that still exists cannot surprise it.
-      capCard.style.display = 'none';
+      // The card itself is hidden in CSS, not removed: that takes the drawer
+      // out of the stepper — and Body with it, optional and empty and framed a
+      // second box asking for something nobody came here to write — while
+      // leaving #captionBody in the document, because render() reads
+      // val('captionBody') and a field that still exists cannot surprise it.
     }
 
-    if (mechCard) stepper.insertBefore(mechCard, stepper.firstChild);
+    if (mechCard) {
+      stepper.insertBefore(mechCard, stepper.firstChild);
+
+      // "Mechanicals" is a printing term for the production artwork. Framed,
+      // this drawer holds the URL and the caption — the content, not the
+      // artwork — so the label was describing the wrong thing. Only the label
+      // changes: data-step stays "mechanicals", which every rule and query in
+      // the codebase keys off.
+      const mechToggle = mechCard.querySelector('[data-step-toggle]');
+      if (mechToggle) mechToggle.textContent = 'Code';
+    }
 
     // The fields are already on the page by now; later type changes rebuild them,
     // so the regrouping has to run again each time renderTypeForm does.
@@ -1453,24 +1462,16 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
         // Disable beforeunload warning (no working file to lose)
         window.__CODEDESK_EMBED_NO_WARN__ = true;
 
-        // The filename prompt has nothing left to ask. The gate was satisfied
-        // in qr_app-bootstrapper.js, and embed mode writes no working file.
-        const filenameSection = document.getElementById('codedeskFilenameSection');
-        if (filenameSection) filenameSection.style.display = 'none';
-
-        // The header holds a wordmark and the type selector. Framed, the
-        // wordmark is worse than redundant: it links to ./index.html, which
-        // reloads the embed and throws away whatever the visitor just made, and
-        // the page around it already says what this is.
+        // What the frame hides — the header, the filename prompt, the Caption
+        // card — is done in the stylesheet, under body.codedesk-embed-mode.
+        // Only the DOM moves that CSS genuinely cannot express live here.
         //
-        // The selector is worth keeping, so it moves rather than goes. Its home
-        // is Mechanicals — #detailsPanel, where the type-specific fields render,
-        // is already inside that drawer, so the control was separated from its
-        // own fields. It sits in the header row, not the panel, so the range of
-        // types stays visible without opening anything. Design's font select is
-        // the same pattern, and .topctl/.topctl--chev is the same on-card style
-        // it uses; the header's white-on-navy rules stop applying by descent,
-        // which is what we want on a white card.
+        // The type selector moves rather than goes. Its home is the Code drawer:
+        // #detailsPanel, where the type-specific fields render, is already
+        // inside it, so the control had been separated from its own fields. It
+        // sits in the header row rather than the panel, so the range of types
+        // stays visible without opening anything — the pattern Design's font
+        // select already follows.
         // Rebuilt as a pill, matching #fontPill in Design exactly: a .ecc-pill
         // group wrapping an sr-only label and the select. The pill is the part
         // that carries the look and the open-only visibility; .topctl--chev
@@ -1505,9 +1506,6 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
 
           if (oldWrap && oldWrap.parentNode) oldWrap.parentNode.removeChild(oldWrap);
         }
-
-        const headerBar = document.querySelector('header.header-bar');
-        if (headerBar) headerBar.style.display = 'none';
 
         codedeskRestructureForEmbed();
 
