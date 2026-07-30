@@ -23,15 +23,22 @@ The original repo is unchanged at
 `git@github.com:jacobeugenehenderson/ascend-portal.git`, and still serves the
 portal. Nothing here pushes back to it.
 
-**Two stylesheets are vendored.** `assets/ascend.css` and
-`assets/ascend-apps.css` were the portal's, loaded over an absolute
-`/ascend-portal/assets/` path — the one thing that made Codedesk unable to run
-anywhere else. They are copied whole rather than subset, because a subset risks
-silently dropping a rule and the pair is only 69 KB. `assets/qr-auth.png` came
-with them; `ascend.css` references it relatively, so it has to sit alongside.
+**There is one stylesheet.** `styles/theme.css` — everything, in cascade order:
+the portal's `ascend.css`, then its `ascend-apps.css`, then Codedesk's own
+theme, which is where it always sat. The first two were loaded over an absolute
+`/ascend-portal/assets/` path, and were the one thing stopping Codedesk running
+anywhere else. They are folded in whole rather than subset, because a subset
+risks silently dropping a rule that only applies in a state nobody thought to
+test. `assets/qr-auth.png` came with them, and the `url()` reaching for it was
+rewritten to `../assets/` when those rules moved from `assets/` into `styles/`.
 
-If the portal's stylesheets change, these do not. That is the intended
-trade — this copy is now Codedesk's own.
+Verified by rendering the pre-merge commit and the merged one side by side
+under a single origin and diffing computed styles: **851 shared elements, zero
+differences**, and 499 rules parsed against 175 + 99 + 225 before. The only DOM
+difference is the two `<link>` tags that no longer exist.
+
+If the portal's stylesheets change, this does not. That is the intended trade —
+this is Codedesk's own CSS now.
 
 ## Embedding
 
