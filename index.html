@@ -41,9 +41,10 @@
  
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Your stylesheet -->
-  <link rel="stylesheet" href="/ascend-portal/assets/ascend.css">
-  <link rel="stylesheet" href="/ascend-portal/assets/ascend-apps.css">
+  <!-- Vendored from ascend-portal when Codedesk was extracted. These are the
+       portal's stylesheets, copied whole rather than subset — see README. -->
+  <link rel="stylesheet" href="./assets/ascend.css">
+  <link rel="stylesheet" href="./assets/ascend-apps.css">
   <link rel="stylesheet" href="./styles/theme.css">
 </head>
 
@@ -548,5 +549,6 @@ new MutationObserver(() => applyPickerTheme())
   </div>
 </div>
 
+<script src="./embed-height.js"></script>
 </body>
 </html>

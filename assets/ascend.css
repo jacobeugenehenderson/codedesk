@@ -1,0 +1,1830 @@
+:root {
+  /* ============================
+   * BRAND & BASE COLORS
+   * ========================== */
+
+  /* Core surfaces */
+  --ascend-color-bg: #050814;
+  --ascend-color-surface: #0d1224;
+  --ascend-color-surface-soft: #121830;
+
+  /* Core accent */
+  --ascend-color-accent: #4fd1c5;
+  --ascend-color-accent-soft: #81e6d9;
+
+  /* Text */
+  --ascend-color-text-main: #f7fafc;
+  --ascend-color-text-muted: #a0aec0;
+
+  /* Borders */
+  --ascend-color-border-subtle: rgba(255, 255, 255, 0.08);
+
+  /* Semantic colors (for future use) */
+  --ascend-color-danger: #f56565;
+  --ascend-color-warning: #ecc94b;
+  --ascend-color-success: #48bb78;
+  --ascend-color-info: #63b3ed;
+
+  /* Hopper progress indicator (shell-derived, desaturated) */
+  --ascend-hopper-stage-1: #e6956a; /* warm amber / sunrise clay */
+  --ascend-hopper-stage-2: #6fb9ad; /* desaturated teal / mid-sky */
+  --ascend-hopper-stage-3: #4e86df; /* desaturated blue / horizon */
+  --ascend-hopper-stage-off-opacity: 0.22;
+
+  /* ============================
+   * TYPOGRAPHY
+   * ========================== */
+
+  /* Font stacks */
+  --ascend-font-sans: system-ui, -apple-system, BlinkMacSystemFont,
+    "SF Pro Text", "Segoe UI", sans-serif;
+  --ascend-font-heading: var(--ascend-font-sans);
+  --ascend-font-body: var(--ascend-font-sans);
+  --ascend-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* Weights */
+  --ascend-weight-regular: 400;
+  --ascend-weight-medium: 500;
+  --ascend-weight-bold: 600;
+
+  /* Type scale (not yet wired everywhere, but available) */
+  --ascend-text-xxl: 2.1rem;
+  --ascend-text-xl: 1.35rem;
+  --ascend-text-l: 1.05rem;
+  --ascend-text-m: 0.95rem;
+  --ascend-text-s: 0.8rem;
+  --ascend-text-xs: 0.72rem;
+
+  /* ============================
+   * LAYOUT & GEOMETRY
+   * ========================== */
+
+  /* Radii & elevation */
+  --ascend-radius-lg: 18px;
+  --ascend-radius-xl: 26px;
+  --ascend-border-width: 1px;
+  --ascend-shadow-soft: 0 20px 50px rgba(0, 0, 0, 0.65);
+  --ascend-shadow-strong: 0 26px 70px rgba(0, 0, 0, 0.75);
+
+  /* Shell & layout */
+  --ascend-gap: 1.25rem;
+  --ascend-max-width: 80%;
+  --ascend-shell-padding-y: 2.5rem;
+  --ascend-shell-padding-x: 1.5rem;
+
+  /* Spacing scale */
+  --ascend-space-xxl: 3rem;
+  --ascend-space-xl: 2rem;
+  --ascend-space-l: 1.5rem;
+  --ascend-space-m: 1rem;
+  --ascend-space-s: 0.75rem;
+  --ascend-space-xs: 0.5rem;
+
+  /* ============================
+   * SURFACE & BACKGROUND PATTERNS
+   * ========================== */
+
+   /* Body backdrop */
+  --ascend-body-bg: radial-gradient(circle at top, #1a2144, #050814 60%, #02030a);
+
+      /* Shell – dawn / ascension*/
+    --ascend-shell-bg:
+  linear-gradient(
+    180deg,
+    rgba(5, 8, 20, 0.55) 0%,
+    rgba(10, 16, 38, 0.55) 32%,
+    rgba(23, 63, 110, 0.55) 50%,
+    rgba(47, 134, 173, 0.55) 64%,
+    rgba(107, 188, 183, 0.55) 72%,
+    rgba(221, 176, 122, 0.55) 80%,
+    rgba(159, 76, 50, 0.55) 84%,
+    rgba(2, 3, 10, 0.75) 86%,
+    rgba(2, 3, 10, 0.75) 100%
+  );
+
+  /* Cards / panels */
+  --ascend-card-surface: var(--ascend-color-surface);
+  --ascend-card-surface-soft: var(--ascend-color-surface-soft);
+  --ascend-card-border: var(--ascend-color-border-subtle);
+
+  /* ============================
+   * GRID MOTIF (BACKGROUND ONLY)
+   * ========================== */
+
+  --ascend-grid-visible: 1; /* 0 or 1 (toggle in future) */
+  --ascend-grid-size: 16px;
+  --ascend-grid-color: rgba(255, 245, 235, 0.09);
+  --ascend-grid-thickness: 1.25px;
+  --ascend-grid-opacity: 0.44;
+  --ascend-grid-emphasis-interval: 4;
+  --ascend-grid-mode: light;
+
+  /* ============================
+   * MOTION
+   * ========================== */
+
+  --ascend-transition-fast: 120ms ease-out;
+  --ascend-transition-medium: 200ms ease-out;
+  --ascend-transition-slow: 320ms ease-out;
+
+  --ascend-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --ascend-ease-emphasized: cubic-bezier(0.19, 1, 0.22, 1);
+
+  /* ============================
+   * COMPONENT KNOBS
+   * ========================== */
+
+  /* Buttons */
+  --ascend-btn-bg: #ffffff;
+  --ascend-btn-text: #0b1025;
+  --ascend-btn-border: transparent;
+  --ascend-btn-radius: 999px;
+  --ascend-btn-hover-bg: #f7fafc;
+  --ascend-btn-active-bg: #e2e8f0;
+  --ascend-btn-focus-outline: rgba(129, 230, 217, 0.8);
+
+  /* Toggles */
+  --ascend-toggle-track: rgba(255, 255, 255, 0.18);
+  --ascend-toggle-track-active: linear-gradient(135deg, #4fd1c5, #81e6d9);
+  --ascend-toggle-thumb: #ffffff;
+
+  /* Tool-level identity (future overrides per module) */
+  --ascend-artstart-accent: var(--ascend-color-accent);
+  --ascend-copydesk-accent: var(--ascend-color-accent);
+  --ascend-codedesk-accent: var(--ascend-color-accent);
+  --ascend-fileroom-accent: var(--ascend-color-accent);
+
+/* ============================
+ * GLOBAL CONTROL DEFAULTS
+ * (portal defaults; light apps override in ascend-apps.css)
+ * ========================== */
+
+--ascend-control-bg: rgba(255, 255, 255, 0.08);
+--ascend-control-bg-hover: rgba(255, 255, 255, 0.12);
+--ascend-control-bg-active: rgba(255, 255, 255, 0.18);
+--ascend-control-text: rgba(255, 255, 255, 0.92);
+--ascend-control-border: rgba(255, 255, 255, 0.16);
+--ascend-control-ring: rgba(129, 230, 217, 0.55);
+--ascend-control-radius: 10px;
+--ascend-control-padding-y: 0.45rem;
+--ascend-control-padding-x: 0.7rem;
+}
+
+/* Global */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 100vw;
+  width: 100%;
+}
+
+body {
+  font-family: var(--ascend-font-body);
+  background: var(--ascend-body-bg);
+  background-attachment: fixed;
+  background-size: 100% 100vh;
+  color: var(--ascend-color-text-main);
+}
+
+/* =========================================
+ * Base controls (buttons + inputs)
+ * ======================================= */
+
+button,
+.ascend-btn,
+.ascend-btn-base {
+  position: relative;
+  font-family: inherit;
+  font-size: 0.85rem;
+  line-height: 1.1;
+  color: var(--ascend-control-text);
+  background: var(--ascend-control-bg);
+  border: 1px solid var(--ascend-control-border);
+  border-radius: var(--ascend-control-radius);
+  padding: var(--ascend-control-padding-y) var(--ascend-control-padding-x);
+  cursor: pointer;
+  transition: transform 80ms ease, background 120ms ease, border-color 120ms ease, opacity 120ms ease, box-shadow 120ms ease;
+  will-change: transform;
+}
+
+button:hover,
+.ascend-btn:hover,
+.ascend-btn-base:hover {
+  background: var(--ascend-control-bg-hover);
+  border-color: color-mix(in srgb, var(--ascend-control-border) 70%, white 30%);
+}
+
+button:active,
+.ascend-btn:active,
+.ascend-btn-base:active {
+  transform: translateY(1px) scale(0.99);
+  background: var(--ascend-control-bg-active);
+}
+
+button:focus-visible,
+.ascend-btn:focus-visible,
+.ascend-btn-base:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ascend-control-ring);
+}
+
+button[disabled],
+.ascend-btn[disabled],
+.ascend-btn-base[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="url"],
+input[type="number"],
+select,
+textarea {
+  color: var(--ascend-control-text);
+  background: var(--ascend-control-bg);
+  border: 1px solid var(--ascend-control-border);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ascend-color-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ascend-control-ring) 65%, transparent 35%);
+}
+
+/* Busy state: disables + shows spinner (button utility) */
+.is-busy {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.is-busy::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--ascend-control-text) 35%, transparent 65%);
+  border-top-color: var(--ascend-control-text);
+  animation: ascend-spin 700ms linear infinite;
+}
+
+@keyframes ascend-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+#ascend-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--ascend-shell-padding-y) var(--ascend-shell-padding-x);
+  box-sizing: border-box;
+}
+
+/* Shell */
+
+.ascend-shell {
+  width: calc(100% - 3rem);
+  background: var(--ascend-shell-bg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 32px;
+  box-shadow: var(--ascend-shadow-soft);
+  border: var(--ascend-border-width) solid var(--ascend-color-border-subtle);
+  padding: 1.75rem 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  /* host for grid overlay */
+  position: relative;
+}
+
+.ascend-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+
+  background-image:
+    /* fine grid only */
+    linear-gradient(
+      to right,
+      var(--ascend-grid-color) var(--ascend-grid-thickness),
+      transparent var(--ascend-grid-thickness)
+    ),
+    linear-gradient(
+      to bottom,
+      var(--ascend-grid-color) var(--ascend-grid-thickness),
+      transparent var(--ascend-grid-thickness)
+    );
+  background-size: var(--ascend-grid-size) var(--ascend-grid-size);
+
+  opacity: calc(var(--ascend-grid-visible) * var(--ascend-grid-opacity));
+}
+
+/* keep actual content above the grid */
+.ascend-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+.ascend-shell {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Header */
+
+.ascend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ascend-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ascend-logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 0%, #ffffff, #4fd1c5 35%, #171a3a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+}
+
+.ascend-title-block h1 {
+  margin: 0;
+  font-size: var(--ascend-text-xl);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: var(--ascend-weight-medium);
+}
+
+.ascend-title-block p {
+  margin: 0.1rem 0 0;
+  font-size: var(--ascend-text-s);
+  color: var(--ascend-color-text-muted);
+}
+
+.ascend-header-right {
+  text-align: right;
+  font-size: var(--ascend-text-xs);
+  color: var(--ascend-color-text-muted);
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+/* Main content layout */
+
+.ascend-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+  gap: 1.5rem;
+  overflow: visible;
+}
+
+/* When logged in, collapse the login column entirely */
+[data-ascend-state="logged-in"] .ascend-main {
+  grid-template-columns: 1fr !important;
+}
+
+/* Stacked mode (≤900px): rows stack vertically */
+@media (max-width: 900px) {
+  .ascend-main {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .ascend-panel {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Rows stack vertically */
+  .ascend-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .ascend-row-primary,
+  .ascend-row-secondary {
+    max-width: 100%;
+  }
+}
+
+/* Narrow mode (900-1200px): dashboard fills shell */
+@media (max-width: 1200px) {
+  .ascend-header,
+  .ascend-dashboard,
+  #ascend-dashboard {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .ascend-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .ascend-header-left {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ascend-logo-circle {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .ascend-title-block {
+    text-align: center;
+  }
+
+  .ascend-title-block h1 {
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+  }
+
+  .ascend-title-block p {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 0.25rem;
+  }
+
+  .ascend-header-right {
+    text-align: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    opacity: 0.75;
+  }
+
+  /* Mobile accordion row headers */
+  .ascend-row-primary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.25rem 0.75rem;
+    padding: 0.6rem 0.75rem;
+    align-items: center;
+  }
+
+  .ascend-row-label {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.65rem;
+    margin-bottom: 0;
+  }
+
+  .ascend-row-title {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .ascend-row-description {
+    display: none; /* Hide on mobile - too cramped */
+  }
+
+  .ascend-row-action-btn {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    margin: 0;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Left side: Login / session card */
+
+.ascend-panel {
+  background: var(--ascend-card-surface);
+  border-radius: var(--ascend-radius-xl);
+  border: var(--ascend-border-width) solid var(--ascend-card-border);
+  padding: 1.4rem 1.3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ascend-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    rgba(129, 230, 217, 0.16),
+    transparent 55%
+  );
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.ascend-panel-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Login state */
+
+.ascend-account-label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-top: 0.15rem;
+}
+
+.ascend-login-heading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.4rem;
+  color: var(--ascend-color-text-muted);
+}
+
+.ascend-login-title {
+  font-size: 1.1rem;
+  margin: 0 0 0.7rem;
+}
+
+.ascend-login-description {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--ascend-color-text-muted);
+}
+
+.ascend-login-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  margin-top: 1.25rem;
+}
+
+.ascend-qr-frame {
+  width: 260px;
+  height: 260px;
+  border-radius: 24px;
+  border: 1px solid rgba(129, 230, 217, 0.6);
+  background: radial-gradient(circle at top, #1a202f, #050814);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ascend-qr-placeholder {
+  width: 100%;
+  height: 100%;
+  background-image: url("qr-auth.png");
+  background-size: 115%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ascend-login-copy {
+  display: none;
+}
+
+.ascend-login-copy strong {
+  color: var(--ascend-color-text-main);
+}
+
+.ascend-toggle-row {
+  display: none;
+}
+
+.ascend-toggle-label {
+  font-size: 0.8rem;
+}
+
+.ascend-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--ascend-toggle-track);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ascend-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--ascend-toggle-thumb);
+  transition: transform var(--ascend-transition-fast);
+}
+
+.ascend-toggle[data-on="true"] {
+  background: var(--ascend-toggle-track-active);
+}
+
+.ascend-toggle[data-on="true"] .ascend-toggle-thumb {
+  transform: translateX(18px);
+}
+
+/* Logged-in marker */
+
+.ascend-session-status {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--ascend-color-text-muted);
+}
+
+/* Right side: Dashboard */
+
+.ascend-dashboard,
+#ascend-dashboard {
+  background: var(--ascend-card-surface-soft);
+  border-radius: var(--ascend-radius-xl);
+  border: var(--ascend-border-width) solid var(--ascend-card-border);
+  padding: 1rem 1.25rem 1.2rem;
+
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+
+  /* Wide mode: 80% of shell, centered */
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ascend-dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.ascend-dashboard-title {
+  font-size: var(--ascend-text-s);
+  font-weight: var(--ascend-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+}
+
+.ascend-user-chip {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(79, 209, 197, 0.16);
+  border: 1px solid rgba(79, 209, 197, 0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ascend-user-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #4fd1c5;
+}
+
+/* Logout button */
+
+.ascend-logout-btn {
+  display: none;
+  border: none;
+  background: transparent;
+  color: var(--ascend-color-text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+[data-ascend-state="logged-in"] .ascend-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ascend-logout-btn:hover {
+  background: rgba(79, 209, 197, 0.22);
+}
+
+/* Dashboard rows */
+
+.ascend-row-list {
+  display: grid;
+
+  /* Let each row size to its content */
+  grid-template-rows: auto auto auto auto;
+
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+
+  overflow: visible;
+}
+
+/* Content Pipeline group (ArtStart + Copydesk) */
+.ascend-content-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ascend-calendar-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid rgba(79, 209, 197, 0.4);
+  border-radius: 10px;
+  background: rgba(79, 209, 197, 0.08);
+  color: var(--ascend-color-text-main);
+  font-size: 0.8rem;
+  font-weight: var(--ascend-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--ascend-transition-fast),
+    border-color var(--ascend-transition-fast),
+    box-shadow var(--ascend-transition-fast);
+}
+
+.ascend-calendar-trigger:hover {
+  background: rgba(79, 209, 197, 0.15);
+  border-color: rgba(79, 209, 197, 0.6);
+  box-shadow: 0 0 12px rgba(79, 209, 197, 0.2);
+}
+
+.ascend-calendar-trigger:active {
+  background: rgba(79, 209, 197, 0.2);
+}
+
+.ascend-calendar-trigger[aria-expanded="true"] {
+  background: rgba(79, 209, 197, 0.18);
+  border-color: var(--ascend-color-accent);
+}
+
+.ascend-calendar-trigger-icon {
+  font-size: 0.95rem;
+}
+
+.ascend-calendar-trigger-label {
+  letter-spacing: 0.01em;
+}
+
+.ascend-row {
+  display: grid;
+  grid-template-columns: 35% 65%;
+  gap: 0.75rem;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.ascend-row > * {
+  min-height: 0;
+}
+
+@media (max-width: 700px) {
+  .ascend-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ascend-row-primary {
+  background: linear-gradient(
+      135deg,
+      rgba(79, 209, 197, 0.2),
+      rgba(16, 29, 61, 0.4)
+    ),
+    #0b1025; /* candidate for future token */
+  border-radius: var(--ascend-radius-lg);
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+
+  min-height: 120px;
+
+  /* control-panel accent */
+  border-left: 3px solid rgba(129, 230, 217, 0.9);
+}
+
+.ascend-row-label {
+  font-size: var(--ascend-text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  color: var(--ascend-color-text-muted);
+}
+
+.ascend-row-title {
+  font-size: 1.18rem;
+  font-weight: var(--ascend-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.ascend-row-description {
+  font-size: 0.8rem;
+  color: var(--ascend-color-text-muted);
+}
+
+.ascend-row-action-btn {
+  margin-top: 0.25rem;
+  align-self: flex-start;
+  border-radius: var(--ascend-btn-radius);
+  border: 1px solid var(--ascend-btn-border);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: var(--ascend-weight-medium);
+  cursor: pointer;
+  background: var(--ascend-btn-bg);
+  color: var(--ascend-btn-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: background-color var(--ascend-transition-fast),
+    color var(--ascend-transition-fast),
+    box-shadow var(--ascend-transition-fast);
+}
+
+.ascend-row-action-btn:hover {
+  background: var(--ascend-btn-hover-bg);
+}
+
+.ascend-row-action-btn:active {
+  background: var(--ascend-btn-active-bg);
+}
+
+.ascend-row-action-btn:focus-visible {
+  outline: 2px solid var(--ascend-btn-focus-outline);
+  outline-offset: 2px;
+}
+
+.ascend-row-action-btn span.icon {
+  font-size: 0.9rem;
+}
+
+.ascend-row-secondary {
+  background: rgba(5, 9, 23, 0.9);
+  border-radius: var(--ascend-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--ascend-color-text-muted);
+
+  min-height: 120px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+/* Hopper lists (ArtStart / Copydesk / Codedesk) */
+.ascend-row-secondary > div[id$="-list"] {
+  flex: 1;
+  min-height: 0;
+  border-radius: 10px;
+  background: radial-gradient(
+    circle at top,
+    rgba(15, 27, 54, 0.7),
+    rgba(4, 7, 20, 0.9)
+  );
+
+  /* Spreadsheet drawer: no gaps, rows provide the separation */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  /* IMPORTANT: clip zebra/hover row fills to the drawer radius */
+  overflow: hidden;
+  overflow-y: auto;
+
+  /* crisp perimeter so the drawer reads as a container */
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* Hopper job rows (spreadsheet style) */
+
+.ascend-job-card {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.ascend-job-list .ascend-job-card {
+  flex: 1 1 0;
+}
+
+/* FileRoom rows use identical rhythm */
+.ascend-fileroom-card {
+  align-items: stretch;
+}
+
+/* Full-width clickable row */
+.ascend-job-card-main {
+  /* reset native button look */
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  flex: 1;
+  position: relative;
+
+  /* row geometry */
+  border-radius: 0;
+  padding: 0.65rem 1rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+
+  /* rule between rows */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+
+  /* hover */
+  transition: background-color var(--ascend-transition-fast);
+}
+
+.ascend-job-card {
+  position: relative;
+}
+
+.ascend-job-card-cancel {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+  color: var(--ascend-color-text-muted);
+  opacity: 0.70;
+
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+
+  transition: background-color var(--ascend-transition-fast),
+    color var(--ascend-transition-fast),
+    opacity var(--ascend-transition-fast);
+}
+
+.ascend-job-card-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--ascend-color-text-main);
+  opacity: 0.95;
+}
+
+/* =========================================================
+ * FileRoom hopper provenance field
+ * (matches the old 3-stacked-squares real estate)
+ * ======================================================= */
+
+.ascend-fileroom-card .ascend-job-card-main {
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: stretch;
+}
+
+/* Provenance cell: invisible container (no pill), holds icon + letter */
+.ascend-fileroom-card .ascend-job-card-provenance {
+  align-self: stretch;
+  width: 48px;
+  height: 100%;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  /* Space for the icon footprint + a clean gap before the letter */
+  padding-left: 26px;
+
+  font-weight: var(--ascend-weight-bold);
+  letter-spacing: 0.08em;
+
+  /* Closer-to-white than subtext, but not pure white */
+  color: color-mix(in srgb, var(--ascend-color-text-main) 92%, white 8%);
+
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  opacity: 0.95;
+}
+
+/* Fixed-height, vertically centered bar: matches the outer 4 corners of the 3-square stack */
+.ascend-fileroom-card .ascend-job-card-provenance::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* 3 stacked 7px squares + 4px gaps => 29px tall */
+  height: 29px;
+  width: 7px;
+
+  /* Match the stacked squares' corner language */
+  border-radius: 2px;
+
+  background: linear-gradient(
+    180deg,
+    var(--ascend-hopper-stage-3) 0%,
+    var(--ascend-hopper-stage-2) 50%,
+    var(--ascend-hopper-stage-1) 100%
+  );
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Big monogram sits “in the same lane” as the old squares */
+.ascend-fileroom-card .ascend-job-card-provenance span {
+  position: relative;
+  z-index: 1;
+
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: 0.06em;
+}
+
+.ascend-hopper-progress {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.ascend-hopper-progress-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  opacity: 1;
+  background: transparent;
+  border: 1px solid
+    color-mix(in srgb, var(--ascend-hopper-stage-1) 55%, transparent);
+}
+
+.ascend-hopper-progress-dot[data-step="2"] {
+  border-color: color-mix(
+    in srgb,
+    var(--ascend-hopper-stage-2) 55%,
+    transparent
+  );
+}
+
+.ascend-hopper-progress-dot[data-step="3"] {
+  border-color: color-mix(
+    in srgb,
+    var(--ascend-hopper-stage-3) 55%,
+    transparent
+  );
+}
+
+/* Light the first N steps based on data-stage */
+.ascend-hopper-progress[data-stage="1"] .ascend-hopper-progress-dot[data-step="1"],
+.ascend-hopper-progress[data-stage="2"] .ascend-hopper-progress-dot[data-step="1"],
+.ascend-hopper-progress[data-stage="3"] .ascend-hopper-progress-dot[data-step="1"] {
+  background: var(--ascend-hopper-stage-1);
+  border-color: transparent;
+  box-shadow: 0 0 0 0.5px rgba(0,0,0,0.35);
+}
+
+/* CodeDesk templates: show “already done” (all blue) */
+.ascend-hopper-progress.is-template .ascend-hopper-progress-dot {
+  background: var(--ascend-hopper-stage-3) !important;
+  opacity: 1 !important;
+}
+
+.ascend-hopper-progress.is-working .ascend-hopper-progress-dot {
+  background: var(--ascend-hopper-stage-1) !important;
+  opacity: 1 !important;
+}
+
+/* Translation subjobs: show all three lights lit (orange/teal/blue) */
+.ascend-hopper-progress.is-translation .ascend-hopper-progress-dot {
+  border-color: transparent !important;
+  opacity: 1 !important;
+}
+.ascend-hopper-progress.is-translation .ascend-hopper-progress-dot[data-step="1"] {
+  background: var(--ascend-hopper-stage-1) !important;
+}
+.ascend-hopper-progress.is-translation .ascend-hopper-progress-dot[data-step="2"] {
+  background: var(--ascend-hopper-stage-2) !important;
+}
+.ascend-hopper-progress.is-translation .ascend-hopper-progress-dot[data-step="3"] {
+  background: var(--ascend-hopper-stage-3) !important;
+}
+
+/* Progress cell: wraps dots + optional language lettermark */
+.ascend-hopper-progress-cell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Language lettermark for translation jobs - matches FileRoom provenance style */
+.ascend-lang-mark {
+  font-size: 1rem;
+  font-weight: var(--ascend-weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ascend-color-text-main) 92%, white 8%);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.ascend-hopper-progress[data-stage="2"] .ascend-hopper-progress-dot[data-step="2"],
+.ascend-hopper-progress[data-stage="3"] .ascend-hopper-progress-dot[data-step="2"] {
+  background: var(--ascend-hopper-stage-2);
+  border-color: transparent;
+}
+
+.ascend-hopper-progress[data-stage="3"] .ascend-hopper-progress-dot[data-step="3"] {
+  background: var(--ascend-hopper-stage-3);
+  border-color: transparent;
+}
+
+.ascend-job-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+/* Zebra striping (rows are siblings inside the lane list) */
+.ascend-job-card:nth-child(odd) .ascend-job-card-main {
+  background: rgba(255, 255, 255, 0.03);
+}
+.ascend-job-card:nth-child(even) .ascend-job-card-main {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ascend-job-card:hover .ascend-job-card-main {
+  background: rgba(79, 209, 197, 0.10);
+}
+
+/* =========================================================
+ * CodeDesk — Template Rows (Hopper Only)
+ * Static, reusable, non-persistent
+ * ======================================================= */
+
+.ascend-codedesk-template .ascend-hopper-progress-dot {
+  background: var(--ascend-hopper-stage-3);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.ascend-codedesk-template {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(78, 134, 223, 0.18),
+      rgba(78, 134, 223, 0.04) 70%,
+      transparent
+    );
+}
+
+.ascend-codedesk-template .ascend-job-card-main {
+  background: transparent;
+}
+
+.ascend-codedesk-template .ascend-job-card-title {
+  color: color-mix(
+    in srgb,
+    var(--ascend-hopper-stage-3) 88%,
+    white 12%
+  );
+}
+
+/* CodeDesk lane typography MUST match the other portal slots (FileRoom/ArtStart/Copydesk) */
+#ascend-codedesk-list .ascend-job-card-title {
+  font-weight: var(--ascend-weight-bold);
+  letter-spacing: 0.01em;
+  font-size: 0.90rem;
+  line-height: 1.15;
+  color: color-mix(in srgb, var(--ascend-color-text-main) 94%, white 6%);
+}
+
+#ascend-codedesk-list .ascend-job-card-meta {
+  margin-top: 0.18rem;
+  font-size: 0.66rem;
+  color: color-mix(in srgb, var(--ascend-color-text-muted) 65%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: var(--ascend-weight-regular);
+}
+
+/* Title + meta stack inside the left cell */
+.ascend-job-card-title {
+  font-weight: var(--ascend-weight-bold);
+  letter-spacing: 0.01em;
+  font-size: 0.90rem;
+  line-height: 1.15;
+  color: color-mix(in srgb, var(--ascend-color-text-main) 94%, white 6%);
+}
+
+.ascend-job-card-meta {
+  margin-top: 0.18rem;
+  font-size: 0.66rem;
+  color: color-mix(in srgb, var(--ascend-color-text-muted) 65%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: var(--ascend-weight-regular);
+}
+
+.ascend-job-card-context,
+.ascend-job-card-time {
+  font-size: 0.66rem;
+  color: color-mix(in srgb, var(--ascend-color-text-muted) 72%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: var(--ascend-weight-regular);
+}
+
+/* Status endcap disabled for FileRoom rows */
+.ascend-fileroom-card .ascend-job-card-status {
+  display: none;
+}
+
+/* FileRoom lane: always stretch cards full width */
+#ascend-fileroom-list {
+  width: 100%;
+}
+
+#ascend-fileroom-list .ascend-job-card {
+  width: 100%;
+}
+
+#ascend-fileroom-list .ascend-job-card-main {
+  width: 100%;
+}
+
+/* Row radius only at the very top/bottom of the drawer */
+.ascend-row-secondary > div[id$="-list"] .ascend-job-card:first-child .ascend-job-card-main {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.ascend-row-secondary > div[id$="-list"] .ascend-job-card:last-child .ascend-job-card-main {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom: none;
+}
+
+/* Delete stays as a compact icon hit-area aligned with the row */
+.ascend-job-card-delete {
+  border: none;
+  background: transparent;
+  color: var(--ascend-color-text-muted);
+  opacity: 0.70;
+
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  align-self: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+
+  transition: background-color var(--ascend-transition-fast),
+    color var(--ascend-transition-fast),
+    opacity var(--ascend-transition-fast);
+}
+
+.ascend-job-card-delete:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--ascend-color-text-main);
+}
+
+.ascend-job-card-delete.is-spacer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Restore button (trash lane) */
+.ascend-job-card-restore {
+  border: none;
+  background: transparent;
+  color: var(--ascend-color-success);
+  opacity: 0.80;
+
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  align-self: center;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+
+  transition: background-color var(--ascend-transition-fast),
+    color var(--ascend-transition-fast),
+    opacity var(--ascend-transition-fast);
+}
+
+.ascend-job-card-restore:hover {
+  background-color: rgba(72, 187, 120, 0.15);
+  color: var(--ascend-color-success);
+  opacity: 1;
+}
+
+/* Trashed item card styling (used in modal) */
+.ascend-trash-card {
+  opacity: 0.85;
+}
+
+.ascend-trash-card .ascend-job-card-provenance.is-trashed {
+  filter: grayscale(0.3);
+}
+
+/* Empty-state text inside a lane */
+.ascend-job-list-empty {
+  font-size: 0.74rem;
+  color: var(--ascend-color-text-muted);
+
+  /* Make empties feel like a real "drawer" state */
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.04);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.ascend-row-secondary strong {
+  color: var(--ascend-color-text-main);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}
+
+/* Visibility states */
+
+[data-ascend-state="logged-out"] #ascend-login-panel {
+  display: block;
+}
+
+[data-ascend-state="logged-in"] #ascend-login-panel {
+  display: none !important;
+}
+
+[data-ascend-state="logged-out"] #ascend-dashboard {
+  display: none;
+}
+
+[data-ascend-state="logged-in"] #ascend-dashboard {
+  display: flex !important;
+}
+
+/* "fileroom" disabled */
+.ascend-row--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ascend-row--disabled .ascend-row-action-btn {
+  cursor: default;
+}
+
+/* =========================================================
+ * Trash trigger button (footer of dashboard)
+ * ======================================================= */
+
+.ascend-trash-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ascend-color-text-muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background-color var(--ascend-transition-fast),
+    border-color var(--ascend-transition-fast),
+    color var(--ascend-transition-fast);
+}
+
+.ascend-trash-trigger:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--ascend-color-text-main);
+}
+
+.ascend-trash-trigger-icon {
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.ascend-trash-trigger-label {
+  font-weight: var(--ascend-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.ascend-trash-trigger-count {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ascend-color-text-muted);
+  min-width: 1.2rem;
+  text-align: center;
+}
+
+.ascend-trash-trigger-count:empty {
+  display: none;
+}
+
+/* =========================================================
+ * Trash modal (FileRoom picker style)
+ * ======================================================= */
+
+.ascend-trash-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.ascend-trash-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 8, 20, 0.75);
+}
+
+.ascend-trash-modal-panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(720px, calc(100vw - 28px));
+  max-height: min(560px, calc(100vh - 28px));
+  background: var(--ascend-color-surface);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+.ascend-trash-modal-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ascend-trash-modal-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ascend-color-text-main);
+  letter-spacing: 0.02em;
+}
+
+.ascend-trash-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ascend-trash-modal-x {
+  border: 0;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ascend-color-text-muted);
+  opacity: 0.7;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color var(--ascend-transition-fast),
+    opacity var(--ascend-transition-fast);
+}
+
+.ascend-trash-modal-x:hover {
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 1;
+}
+
+.ascend-trash-modal-body {
+  padding: 14px 18px 18px;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+
+  background: linear-gradient(
+    180deg,
+    rgba(13, 18, 36, 0.95),
+    rgba(5, 8, 20, 0.98)
+  );
+}
+
+.ascend-trash-modal-note {
+  font-size: 0.75rem;
+  color: var(--ascend-color-text-muted);
+  margin-bottom: 12px;
+}
+
+/* Trash list inside modal */
+.ascend-trash-list {
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(5, 9, 23, 0.9);
+}
+
+/* Trash cards use same styling as fileroom cards */
+.ascend-trash-list .ascend-job-card {
+  display: flex;
+  align-items: stretch;
+}
+
+.ascend-trash-list .ascend-job-card-main {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  border-radius: 0;
+  padding: 0.65rem 1rem;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  transition: background-color var(--ascend-transition-fast);
+}
+
+.ascend-trash-list .ascend-job-card:nth-child(odd) .ascend-job-card-main {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ascend-trash-list .ascend-job-card:nth-child(even) .ascend-job-card-main {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ascend-trash-list .ascend-job-card:hover .ascend-job-card-main {
+  background: rgba(72, 187, 120, 0.08);
+}
+
+.ascend-trash-list .ascend-job-card:first-child .ascend-job-card-main {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.ascend-trash-list .ascend-job-card:last-child .ascend-job-card-main {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-bottom: none;
+}
+
+/* Trash empty state inside modal */
+.ascend-trash-list .ascend-job-list-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  border-radius: 12px;
+}
+
+/* =========================================================
+ * RESPONSIVE SCALING — Laptop & Tablet Support
+ * Addresses jumbled/oversized layouts on smaller screens
+ * ======================================================= */
+
+/* Base: Fluid typography scaling */
+html {
+  /* Scales from 14px at 320px viewport to 16px at 1440px */
+  font-size: clamp(0.875rem, 0.8rem + 0.25vw, 1rem);
+}
+
+/* Force all boxes to include padding in width calculations */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
+
+/* Trash modal scales down on smaller screens */
+@media (max-width: 1023px) {
+  .ascend-trash-modal-panel {
+    width: min(600px, calc(100vw - 20px));
+    max-height: min(480px, calc(100vh - 20px));
+  }
+}
+
+/* Small tablets / large phones (max 767px) */
+@media (max-width: 767px) {
+  #ascend-root {
+    padding: 1rem 0.5rem;
+  }
+
+  .ascend-shell {
+    border-radius: 12px;
+    padding: 0.85rem 0.75rem;
+    gap: 1rem;
+  }
+
+  .ascend-header {
+    gap: 0.75rem;
+  }
+
+  .ascend-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .ascend-row-primary {
+    padding: 0.65rem 0.85rem;
+    gap: 0.4rem;
+  }
+
+  .ascend-row-title {
+    font-size: 0.95rem;
+  }
+
+  .ascend-row-action-btn {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .ascend-qr-frame {
+    width: 160px;
+    height: 160px;
+    border-radius: 18px;
+  }
+
+  .ascend-dashboard-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ascend-job-card-main {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .ascend-job-card-title {
+    font-size: 0.82rem;
+  }
+
+  .ascend-trash-modal-panel {
+    width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    border-radius: 12px;
+  }
+
+  .ascend-trash-modal-header {
+    padding: 10px 14px;
+  }
+
+  .ascend-trash-modal-body {
+    padding: 10px 14px 14px;
+  }
+}
+
+/* Prevent horizontal overflow globally */
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 100vw;
+  width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 100vw;
+  width: 100%;
+  min-width: 0;
+}
+
+#ascend-root,
+.ascend-main,
+.ascend-dashboard,
+#ascend-dashboard,
+.ascend-row,
+.ascend-row-primary,
+.ascend-row-secondary {
+  min-width: 0;
+}
+
+/* Ensure images and media scale */
+img, video, svg, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent text from causing overflow */
+* {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Long URLs/text in cards */
+.ascend-job-card-title,
+.ascend-job-card-url,
+.ascend-job-card-context {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
