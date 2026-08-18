@@ -1233,6 +1233,14 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
   // white square makes that page a liar. Caption starts open so the first thing
   // visible is an editable field, not four closed drawers.
   //
+  // NO CAPTION IS SEEDED, deliberately (17 Aug 2026). It used to land on
+  // "Scan me", and render_engine draws a caption whenever the text is non-empty
+  // — which makes the card TALLER THAN IT IS WIDE. Framed, that costs vertical
+  // space the embedding page has to give it before a visitor has done anything.
+  // Empty caption -> showCaption false -> a square card. Nothing is hidden or
+  // removed: the field is still there, still open, still the first thing you can
+  // type into, so "Change anything" on the page above stays true.
+  //
   // The type fields (#urlData among them) are built from the manifest at render
   // time, so this cannot run straight through — it waits for the field to exist,
   // for a bounded number of frames, and gives up quietly rather than spinning.
@@ -1240,9 +1248,6 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
     if (window.__CODEDESK_EMBED_LANDING_APPLIED__) return;
 
     const LANDING_URL     = 'www.okQRal.com';
-    // Not the URL again — the code already says where it goes. The caption's
-    // job here is to show what a caption is for. (#campaign caps at 20 chars.)
-    const LANDING_CAPTION = 'Scan me';
     const MAX_FRAMES      = 60; // ~1s at 60fps; the field appears in the first few
 
     let frames = 0;
@@ -1269,7 +1274,59 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       window.__CODEDESK_EMBED_LANDING_APPLIED__ = true;
 
       setValue(urlField, LANDING_URL);
-      setValue(document.getElementById('campaign'), LANDING_CAPTION);
+      /* #campaign is left EMPTY on purpose — see the note above. */
+
+      // -------------------------------------------------------------------
+      // THE LANDING PALETTE. These are jacobhenderson.studio's own press
+      // tokens, so the framed code reads as a printed object on that page
+      // rather than as a default widget:
+      //   #E7E4DD  --paper       uncoated stock, flat top and bottom
+      //   #1A1A19  --ink         registration black, for modules and eye centres
+      //   #6A3E64  --spot-code   the QR piece's plum, the same ink as its
+      //                          index patch and its disclosure swatch
+      // Squares throughout: nothing on that site is rounded except one pill.
+      // The card carries its own background, so it does NOT flip with the
+      // page's Paper/Plate switch — which is correct. A sheet of stock looks
+      // like a sheet of stock on either ground.
+      //
+      // setValue() only fills EMPTY fields, and every one of these ships with
+      // a default, so they need a setter that always writes.
+      const force = (id, value) => {
+        const node = document.getElementById(id);
+        if (!node) return;
+        node.value = value;
+        node.dispatchEvent(new Event('input',  { bubbles: true }));
+        node.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const forceColor = (id, hex) => { force(id, hex); force(id + 'Hex', hex); };
+
+      const PAPER = '#E7E4DD', INK = '#1A1A19', PLUM = '#6A3E64';
+
+      force('modulesMode',    'Shape');
+      force('moduleShape',    'Square');
+      force('bodyColor',      INK);
+      force('bodyColorHex',   INK);
+
+      force('eyeRingShape',   'Square');
+      forceColor('eyeRingColor', PLUM);
+
+      force('eyeCenterMode',  'Shape');
+      force('eyeCenterShape', 'Square');
+      forceColor('eyeCenterColor', INK);
+
+      force('centerMode',     'None');
+
+      // Flat stock, not a gradient: same colour top and bottom, fully opaque.
+      force('bgTopColor',     PAPER);  force('bgTopHex',    PAPER);
+      force('bgBottomColor',  PAPER);  force('bgBottomHex', PAPER);
+      force('bgTopAlpha',     '100');  force('bgTopAlphaNum',    '100');
+      force('bgBottomAlpha',  '100');  force('bgBottomAlphaNum', '100');
+
+      // Caption is empty, but if a visitor types one it should not arrive in a
+      // face the page has never used.
+      force('fontFamily',     'JetBrains Mono');
+      forceColor('captionColor', INK);
+      // -------------------------------------------------------------------
 
       // Open Caption by clicking its own toggle, so the accordion bookkeeping
       // (aria-expanded, is-open, the stepper's mode classes) is done by the code
