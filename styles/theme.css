@@ -5113,6 +5113,32 @@ textarea.fldInp {
 }
 
 /* =====================================================================
+   EMBED MODE — the document sizes to its content, not to the frame
+   ---------------------------------------------------------------------
+   Unframed, this app is a full-viewport application: html and body are
+   height:100% and body scrolls. Framed, that makes self-sizing impossible —
+   the document is DEFINED as the height of the iframe, so nothing inside it
+   can report how tall the content actually is. documentElement.scrollHeight
+   returns the viewport; body's border box returns the viewport; both are the
+   frame we are already in.
+
+   The visible result was a one-way ratchet and then, once embed-height.js
+   started measuring the body instead, a slow crawl: the parent shrank the
+   frame a little, body re-measured a little smaller, and the two converged
+   two pixels at a time for about twenty seconds. Jacob reported both.
+
+   So framed, the document sizes to its content and the PARENT does the
+   scrolling. Only in embed mode: unframed behaviour is untouched, and the
+   middle-click autoscroll the overflow rule exists for still works there.
+   ===================================================================== */
+html:has(body.codedesk-embed-mode),
+body.codedesk-embed-mode {
+  height: auto;
+  min-height: 0;
+  overflow-y: visible;
+}
+
+/* =====================================================================
    EMBED MODE — type selector relocated out of the header
    ---------------------------------------------------------------------
    #qrType carries an unscoped rule painting --chev-icon, a white SVG that
