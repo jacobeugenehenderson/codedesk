@@ -1284,13 +1284,6 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       // reason the design exists, and it also demonstrates the emoji centre —
       // which the page has claimed for months without ever showing it.
       //
-      // The background fades to TRANSPARENT at the top. That is deliberate and
-      // it carries into the exported PNG: two of the three finder patterns sit
-      // in that region, so a code dropped on a dark ground will not scan.
-      // Jacob's call, and it is the consistent one — a tool that promises your
-      // code is yours does not get to decide where you put it. Do not "fix"
-      // this by flooring the alpha.
-      //
       // setValue() only fills EMPTY fields, and every one of these ships with a
       // default, so they need a setter that always writes.
       const force = (id, value) => {
@@ -1302,10 +1295,21 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       };
       const forceColor = (id, hex) => { force(id, hex); force(id + 'Hex', hex); };
 
-      // modules: dun, rounded, shape-filled
-      force('modulesMode',    'Shape');
+      // modules: brown squares, as EMOJI. This is the headline feature making
+      // the loud version of its own argument — the cowboy is emoji as
+      // ornament, this is emoji as the code itself. 0.85 leaves a gap between
+      // cells so it reads as brickwork rather than a solid field.
+      //
+      // The three finder patterns stay solid ochre shapes on purpose. A decoder
+      // locates those before it can read anything, so novelty belongs in the
+      // data modules and nowhere near them.
+      //
+      // bodyColor is set but unused while the fill is Emoji; it is kept so
+      // switching the fill back to Shape lands on the dun rather than on black.
+      force('modulesMode',    'Emoji');
+      force('modulesEmoji',   '\u{1F7EB}');
       force('moduleShape',    'Rounded');
-      force('modulesScale',   '0.9');
+      force('modulesScale',   '0.85');
       forceColor('bodyColor', '#3e2f04');
 
       // eyes: ochre rounded rings, brown discs in the middle.
@@ -1326,11 +1330,36 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       force('centerEmoji',    '\u{1F920}');
       force('centerScale',    '1.2');
 
-      // cream, fading out upward
+      // Opaque cream at the foot, fading OUT to transparent at the top. The
+      // fade is deliberate and it carries into the exported PNG, where two of
+      // the three finder patterns sit — a code dropped on a dark ground will
+      // not scan. Jacob's call, and the consistent one: a tool that promises
+      // your code is yours does not get to choose where you put it.
+      //
+      // The solid end is 100 rather than the 65 it was designed at. That is the
+      // whole of the compromise — the fade stays, the cream underneath it is
+      // fully cream.
       force('bgTopColor',     '#ffffff'); force('bgTopHex',    '#ffffff');
       force('bgBottomColor',  '#fff2db'); force('bgBottomHex', '#fff2db');
+
+      // ⚠ UNLINK FIRST OR THE TWO ALPHAS CANNOT DIFFER. The pair is LINKED by
+      // default (qr_ui_toolkit.js:660, stored in localStorage) and a linked
+      // pair mirrors each slider onto the other on input. Seeding therefore
+      // fought itself: setting the top to 0 mirrored 0 onto the bottom, then
+      // setting the bottom to 100 mirrored 100 back onto the top, and the card
+      // rendered flat opaque with no fade at all. That is why the transparency
+      // never arrived, and no amount of re-ordering these two lines fixes it —
+      // mirroring makes them equal by definition.
+      //
+      // Click the app's own toggle rather than writing its storage key, so the
+      // chain glyph and aria-pressed stay truthful. It leaves the visitor
+      // unlinked, which is the honest state for what they are looking at: a
+      // gradient whose two ends really do differ.
+      const bgLink = document.getElementById('bgLink');
+      if (bgLink && bgLink.getAttribute('aria-pressed') === 'true') bgLink.click();
+
       force('bgTopAlpha',     '0');   force('bgTopAlphaNum',    '0');
-      force('bgBottomAlpha',  '65');  force('bgBottomAlphaNum', '65');
+      force('bgBottomAlpha',  '100'); force('bgBottomAlphaNum', '100');
 
       force('fontFamily',     'Work Sans');
       // -------------------------------------------------------------------
