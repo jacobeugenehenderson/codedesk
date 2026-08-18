@@ -3695,7 +3695,9 @@ body.kbd .ecc-btn[aria-pressed="true"] {
 }
 
 .header-bar select#qrType:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  /* background-COLOR — see the note on .topctl:hover. The shorthand here beat
+     the base rule's !important background-image and erased the chevron. */
+  background-color: rgba(255, 255, 255, 0.12) !important;
   border-color: rgba(255, 255, 255, 0.25);
 }
 
@@ -3812,13 +3814,20 @@ select.rounded-md,
 }
 
 /* Make top-bar controls feel like .ecc-btn on hover/focus/active */
+/* ⚠ background-COLOR, never the `background` shorthand. These controls paint a
+   chevron with background-image, and the shorthand resets every background
+   longhand it does not mention — including background-repeat, which returns to
+   `repeat`. #qrType then had its image re-supplied by a more specific rule
+   (body.codedesk-embed-mode) while repeat, size and position stayed reset, so
+   hovering tiled three chevrons across the control at their intrinsic size.
+   Unframed the same reset simply erased the chevron on hover. */
 .topctl:hover,
 #qrType:hover,
 #appMenuBtn:hover,
 .topctl:focus-visible,
 #qrType:focus-visible,
 #appMenuBtn:focus-visible{
-  background: var(--ascend-control-hover-wash, rgba(255,255,255,.08));
+  background-color: var(--ascend-control-hover-wash, rgba(255,255,255,.08));
   transform: translateY(-1px);
   outline: none;
 }
