@@ -1277,20 +1277,22 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       /* #campaign is left EMPTY on purpose — see the note above. */
 
       // -------------------------------------------------------------------
-      // THE LANDING PALETTE. These are jacobhenderson.studio's own press
-      // tokens, so the framed code reads as a printed object on that page
-      // rather than as a default widget:
-      //   #E7E4DD  --paper       uncoated stock, flat top and bottom
-      //   #1A1A19  --ink         registration black, for modules and eye centres
-      //   #6A3E64  --spot-code   the QR piece's plum, the same ink as its
-      //                          index patch and its disclosure swatch
-      // Squares throughout: nothing on that site is rounded except one pill.
-      // The card carries its own background, so it does NOT flip with the
-      // page's Paper/Plate switch — which is correct. A sheet of stock looks
-      // like a sheet of stock on either ground.
+      // THE LANDING DESIGN. Jacob's, built in the app and transcribed here.
       //
-      // setValue() only fills EMPTY fields, and every one of these ships with
-      // a default, so they need a setter that always writes.
+      // It is a western: ok-QR-al is the OK Corral, so the centre of the code
+      // is a cowboy and the palette is dun, ochre and cream. The joke is the
+      // reason the design exists, and it also demonstrates the emoji centre —
+      // which the page has claimed for months without ever showing it.
+      //
+      // The background fades to TRANSPARENT at the top. That is deliberate and
+      // it carries into the exported PNG: two of the three finder patterns sit
+      // in that region, so a code dropped on a dark ground will not scan.
+      // Jacob's call, and it is the consistent one — a tool that promises your
+      // code is yours does not get to decide where you put it. Do not "fix"
+      // this by flooring the alpha.
+      //
+      // setValue() only fills EMPTY fields, and every one of these ships with a
+      // default, so they need a setter that always writes.
       const force = (id, value) => {
         const node = document.getElementById(id);
         if (!node) return;
@@ -1300,32 +1302,37 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       };
       const forceColor = (id, hex) => { force(id, hex); force(id + 'Hex', hex); };
 
-      const PAPER = '#E7E4DD', INK = '#1A1A19', PLUM = '#6A3E64';
-
+      // modules: dun, rounded, shape-filled
       force('modulesMode',    'Shape');
-      force('moduleShape',    'Square');
-      force('bodyColor',      INK);
-      force('bodyColorHex',   INK);
+      force('moduleShape',    'Rounded');
+      force('modulesScale',   '0.9');
+      forceColor('bodyColor', '#3e2f04');
 
-      force('eyeRingShape',   'Square');
-      forceColor('eyeRingColor', PLUM);
-
-      force('eyeCenterMode',  'Shape');
+      // eyes: ochre rounded rings, brown discs in the middle.
+      // #8a6604 rather than the #a87d05 this was designed at. Finder patterns
+      // are the first thing a decoder looks for, and the lighter ochre measured
+      // 2.95:1 against jacobhenderson.studio's paper — under the ~3:1 a decoder
+      // wants. This is 4.15:1 there and 4.76:1 on the card's own cream, and it
+      // reads as the same colour. Do not lighten it back without measuring.
+      force('eyeRingShape',   'Rounded');
+      forceColor('eyeRingColor', '#8a6604');
       force('eyeCenterShape', 'Square');
-      forceColor('eyeCenterColor', INK);
+      force('eyeCenterMode',  'Emoji');
+      force('eyeCenterEmoji', '\u{1F7E4}');
+      force('eyeCenterScale', '1');
 
-      force('centerMode',     'None');
+      // the punchline
+      force('centerMode',     'Emoji');
+      force('centerEmoji',    '\u{1F920}');
+      force('centerScale',    '1.2');
 
-      // Flat stock, not a gradient: same colour top and bottom, fully opaque.
-      force('bgTopColor',     PAPER);  force('bgTopHex',    PAPER);
-      force('bgBottomColor',  PAPER);  force('bgBottomHex', PAPER);
-      force('bgTopAlpha',     '100');  force('bgTopAlphaNum',    '100');
-      force('bgBottomAlpha',  '100');  force('bgBottomAlphaNum', '100');
+      // cream, fading out upward
+      force('bgTopColor',     '#ffffff'); force('bgTopHex',    '#ffffff');
+      force('bgBottomColor',  '#fff2db'); force('bgBottomHex', '#fff2db');
+      force('bgTopAlpha',     '0');   force('bgTopAlphaNum',    '0');
+      force('bgBottomAlpha',  '65');  force('bgBottomAlphaNum', '65');
 
-      // Caption is empty, but if a visitor types one it should not arrive in a
-      // face the page has never used.
-      force('fontFamily',     'JetBrains Mono');
-      forceColor('captionColor', INK);
+      force('fontFamily',     'Work Sans');
       // -------------------------------------------------------------------
 
       // Open Caption by clicking its own toggle, so the accordion bookkeeping
