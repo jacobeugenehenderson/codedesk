@@ -101,6 +101,67 @@ Traps, each of which was a real bug here:
   correct in Chrome. The Advanced disclosure swaps its marker, never its
   display.
 
+## Payloads — two builders, and the SMS rules
+
+⛔ **There are TWO functions that answer "what string does this QR encode?", and they
+do not agree.** `buildText()` in `qr_ui_toolkit.js` uses cases keyed `URL` `EMAIL`
+`PHONE` `SMS` `WIFI` `VCARD` `MAP`; the builder in `qr_sync_pipeline.js` uses `URL`
+`Payment` `WiFi` `Contact` `Message` `Event` `Map`. **`qr_type_manifest.json` declares
+the second set**, so the pipeline's cases are live and several of `buildText`'s are
+**dead twins** — code that reads correctly and is never called.
+
+⭐ **That is not academic; it is how the 2026-08-29 bug survived.** The dead `SMS`
+twin built a correct `sms:` URI while the live `Message` case built a broken one, so
+anyone grepping `sms:` found the good code first and concluded the tool was fine.
+**Change one, change both, or delete the twin.**
+
+### The SMS rules, each learned from a shipped defect
+
+1. ⛔ **`?body=`, never `?&body=`.** RFC 5724 is `sms:<number>?body=<text>`. The stray
+   ampersand made the query malformed, and a URI pasted into the number field came out
+   as `sms:N?body=A?&body=B` — two bodies, and the phone takes the last one.
+2. ⛔ **No placeholder fallbacks.** `val("smsNumber") || "5551234567"` and
+   `val("smsText") || "Hello"` meant an **empty form produced a working QR** — one that
+   scans, addresses a stranger's number and says Hello. A blank field must yield a
+   blank payload so the preview is visibly empty rather than plausibly wrong.
+3. ⛔ **UTM is for http(s) only.** `new URL()` parses `sms:`/`mailto:`/`tel:` perfectly
+   well, so the UTM branch did **not** throw on them — it re-encoded the query and
+   appended the param, putting `+` where the body's spaces were and `&utm_source=…`
+   inside the message. Non-web schemes now drop the tag and say so.
+
+⚠️ **`msgMode` (Personal / Resistbot) is read by NOTHING.** Grep it: neither builder
+looks at it, so the choice changes no output. It is disabled and labelled "coming
+soon" rather than removed, because the intent is wanted. Wire the builder and delete
+the disabling block in `codedeskGroupAdvancedFields`.
+
+⚠️ **`?body=` is the RFC and what Android needs; iOS historically accepted `&body=`.**
+Re-test on a real handset of each kind after any change here — getting it wrong works
+perfectly on the phone in your hand and fails on everyone else's.
+
+## Verifying a code before it ships
+
+⛔ **Do not judge a QR by looking at it. Decode it, and count how hard it was.**
+
+Chrome has `BarcodeDetector` built in — load the PNG and run
+`new BarcodeDetector({formats:['qr_code']}).detect(canvas)` across a sweep of scales
+and binarisation thresholds. **The count is the scanning margin**, and it is the
+property a QR loses silently:
+
+| | payload | decoded |
+|---|---|---|
+| 2026-08-29, first attempt | 151 chars, default ECC | 1 of 24 variants, first success on the 6th |
+| after shortening + higher ECC | 76 chars | **8 of 18, first success on the 1st (raw)** |
+
+⭐ **Payload length is the budget.** Every character adds modules to the same square,
+so each gets smaller, while a centre logo keeps occluding the same *area* and eats a
+larger share of the error correction. A long friendly message can make a code a phone
+reads at six inches and a laptop screen does not read at all.
+
+⚠️ **Do not try to measure module pitch by run-lengths here.** The finders are
+stylised — rounded rings with a dot — so the 1:1:3:1:1 ratio that method needs is
+distorted, and an autocorrelation fallback returns its minimum lag. Both were tried
+and both gave nonsense. The decode-variant count is the measurement that holds.
+
 ## Embedding
 
 `embed-height.js` is loaded last and reports
