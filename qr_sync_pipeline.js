@@ -347,7 +347,10 @@ window.codedeskFinishSetup = function codedeskFinishSetup(){
       : null);
     const hasWf = !!rec;
 
-    const ok = (accepted && !!fname && !hasWf);
+    // Embed mode has no filename ceremony: the sparkle downloads a PNG rather
+    // than writing a working file, so there is no name for it to gate. Leaving
+    // the general rule in force disabled the only export control the embed has.
+    const ok = (window.CODEDESK_EMBED_MODE === true) || (accepted && !!fname && !hasWf);
 
     document.querySelectorAll('button').forEach(b => {
       if (!isFinishButton(b)) return;
@@ -381,7 +384,11 @@ window.codedeskFinishSetup = function codedeskFinishSetup(){
         } catch(e){}
       } else {
         b.disabled = false;
-        try { b.removeAttribute('title'); } catch(e){}
+        // The embed titles this button 'Download PNG' at boot; don't strip that.
+        try {
+          if (window.CODEDESK_EMBED_MODE === true) b.setAttribute('title', 'Download PNG');
+          else b.removeAttribute('title');
+        } catch(e){}
 
         // restore label if we previously preserved it
         try {
@@ -859,6 +866,48 @@ window.codedeskFinishSetup = function codedeskFinishSetup(){
     }
   } catch(_e){}
 
+  // =====================================================
+  // EMBED MODE: Download PNG directly instead of FileRoom sync
+  // -----------------------------------------------------
+  // This runs BEFORE the filename gate and the working-file lookups below,
+  // all of which concern a Drive record the embed never writes. The gate reads
+  // #codedeskFilename, which the embed hides and never fills, so it is always
+  // empty: with this block sitting after it, every sparkle click returned
+  // early and nothing was ever downloaded.
+  // =====================================================
+  if (window.CODEDESK_EMBED_MODE === true) {
+    if (window.__CODEDESK_FINISH_INFLIGHT__ === true) return;
+    window.__CODEDESK_FINISH_INFLIGHT__ = true;
+    console.log('[✨ click] EMBED MODE — downloading PNG');
+    try {
+      btn.disabled = true;
+      btn.classList.add('is-busy');
+      btn.textContent = 'Saving…';
+
+      // No filename input here, so the name comes from the same helper the
+      // export buttons use: the campaign field, falling back to the code type.
+      const pngFilename = (typeof buildSuggestedFilename === 'function')
+        ? buildSuggestedFilename('png')
+        : 'qr.png';
+
+      if (typeof window.downloadPng === 'function') {
+        await window.downloadPng(pngFilename);
+        console.log('[✨ click] EMBED MODE — PNG downloaded:', pngFilename);
+      } else {
+        console.error('[✨ click] EMBED MODE — downloadPng not available');
+      }
+    } catch (embedErr) {
+      console.error('[✨ click] EMBED MODE error:', embedErr);
+    } finally {
+      // Reset button state (allow re-download)
+      btn.disabled = false;
+      btn.classList.remove('is-busy');
+      btn.textContent = '✨';
+      try { window.__CODEDESK_FINISH_INFLIGHT__ = false; } catch(_e){}
+    }
+    return; // Exit early — do not run normal FileRoom flow
+  }
+
   // Ceremony contract:
   // - Enter unlocks the workspace (no server writes)
   // - ✨ creates the working file + Drive/FileRoom artifacts (one-time), then disappears forever
@@ -914,47 +963,6 @@ window.codedeskFinishSetup = function codedeskFinishSetup(){
   window.__CODEDESK_FINISH_INFLIGHT__ = true;
   console.log('[✨ click] proceeding with setup...');
 
-  // =====================================================
-  // EMBED MODE: Download PNG directly instead of FileRoom sync
-  // =====================================================
-  if (window.CODEDESK_EMBED_MODE === true) {
-    console.log('[✨ click] EMBED MODE — downloading PNG');
-    try {
-      btn.disabled = true;
-      btn.classList.add('is-busy');
-      btn.textContent = 'Saving…';
-
-      // Build filename from the ceremony input
-      const baseName = String(fname || 'qr').trim()
-        .replace(/[^\w\d\-_\s]+/g, '_')
-        .replace(/\s+/g, '_')
-        .replace(/_+/g, '_')
-        .replace(/^_+|_+$/g, '')
-        .substring(0, 40) || 'qr';
-      const pngFilename = baseName + '.png';
-
-      // Download the PNG
-      if (typeof window.downloadPng === 'function') {
-        await window.downloadPng(pngFilename);
-        console.log('[✨ click] EMBED MODE — PNG downloaded:', pngFilename);
-      } else {
-        console.error('[✨ click] EMBED MODE — downloadPng not available');
-      }
-
-      // Reset button state (allow re-download)
-      btn.disabled = false;
-      btn.classList.remove('is-busy');
-      btn.textContent = '✨';
-    } catch (embedErr) {
-      console.error('[✨ click] EMBED MODE error:', embedErr);
-      btn.disabled = false;
-      btn.classList.remove('is-busy');
-      btn.textContent = '✨';
-    } finally {
-      try { window.__CODEDESK_FINISH_INFLIGHT__ = false; } catch(_e){}
-    }
-    return; // Exit early — do not run normal FileRoom flow
-  }
 
   // =====================================================
   // NORMAL MODE: FileRoom sync (Ascend integration)
