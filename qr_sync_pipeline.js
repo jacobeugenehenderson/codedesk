@@ -1845,6 +1845,30 @@ function buildText(){
         // If nothing extra was entered, return as-is
         if (!s && !m && !c) return rawTrim;
 
+        // ⛔ UTM IS FOR http(s) ONLY. `new URL()` parses `sms:`/`mailto:`/`tel:` fine,
+        // so the try-branch below did NOT throw on them — it re-encoded the query and
+        // appended the param, and an SMS code came out with `+` where its spaces were
+        // and `&utm_source=…` inside the message body. Measured 2026-08-29:
+        //   in   sms:+18773351917?body=Hi%20-%20about…
+        //   out  sms:+18773351917?body=Hi+-+about…&utm_source=yardsign
+        // ⭐ A non-web scheme has nowhere to carry a campaign tag, so the tag is
+        // DROPPED — and it SAYS SO, because silently ignoring is a quieter version of
+        // the same bug. http/https are untouched, and so is a relative path.
+        const scheme = (rawTrim.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):/) || [,''])[1].toLowerCase();
+        if (scheme && scheme !== 'http' && scheme !== 'https') {
+          const note = `UTM tags are ignored on a "${scheme}:" code — there is no web query to carry them. `
+                     + `Put the placement in the message text instead.`;
+          console.warn('[codedesk] ⛔ ' + note, { payload: rawTrim });
+          try {
+            ['utmSource','utm_source','utmMedium','utm_medium','utmCampaign','utm_campaign']
+              .forEach(function(id){
+                const el = document.getElementById(id);
+                if (el && String(el.value || '').trim()) { el.title = note; el.dataset.ignored = '1'; }
+              });
+          } catch (_e) {}
+          return rawTrim;
+        }
+
         try {
           // Robust path when rawTrim is a valid absolute URL
           const u = new URL(rawTrim);
@@ -1920,10 +1944,21 @@ function buildText(){
         ].filter(Boolean).join("\n");
       }
       case "Message": {
-        const num = val("smsNumber") || "5551234567";
-        const txt = encodeURIComponent(val("smsText") || "Hello");
-        // SMS URI (broadly supported): sms:+15551234567?&body=Hello
-        return `sms:${num}?&body=${txt}`;
+        // ⛔ `?body=`, NOT `?&body=`. RFC 5724 is `sms:<number>?body=<text>`; the stray
+        // ampersand made the query malformed, and a URI pasted into the number field
+        // came out as `sms:N?body=A?&body=B` — two bodies, and the phone takes the
+        // last. That is the "it still says Hello" report (Jacob, 2026-08-29).
+        // ⛔ NO PLACEHOLDER FALLBACKS. `|| "5551234567"` and `|| "Hello"` meant an
+        // EMPTY FORM produced a WORKING QR — one that scans, addresses a stranger's
+        // number and says Hello. A blank field must yield a blank payload so the
+        // preview is visibly empty rather than plausibly wrong.
+        // ⭐ buildText()'s "SMS" case in qr_ui_toolkit.js already does this correctly,
+        // but the manifest's type is "Message", so that twin is never reached. If you
+        // change one, change both.
+        const num = String(val("smsNumber") || "").trim().replace(/[^\d+]/g, "");
+        const txt = String(val("smsText") || "").trim();
+        if (!num) return "";
+        return txt ? `sms:${num}?body=${encodeURIComponent(txt)}` : `sms:${num}`;
       }
       case "Event": {
         // Very light VEVENT for preview
