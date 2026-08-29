@@ -254,12 +254,14 @@
       ]
     },
     "smsNumber": {
-      "label": "Phone #",
-      "type": "text"
+      "label": "Send to",
+      "type": "text",
+      "placeholder": "+1 877 335 1917"
     },
     "smsText": {
-      "label": "Message",
-      "type": "text"
+      "label": "Pre-filled message",
+      "type": "text",
+      "placeholder": "What their text will say before they hit send"
     },
     "evtTitle": {
       "label": "Title",

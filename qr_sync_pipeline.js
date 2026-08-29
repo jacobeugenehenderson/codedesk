@@ -1438,10 +1438,23 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
     const stale = document.getElementById('embedAdvanced');
     if (stale) stale.remove();
 
-    // Tracking parameters only. A general "first field is primary" rule would
-    // bury the WiFi password and most of a contact card.
-    const rows = [...details.querySelectorAll('.fldRow')]
-      .filter((row) => row.querySelector('[id^="utm"]'));
+    // ⛔ NAMED PER TYPE, never a positional rule. A general "first field is
+    // primary" heuristic would bury the WiFi password and most of a contact card,
+    // which is why this started as tracking-params-only. It is still explicit —
+    // just no longer hard-coded to `utm`, so a type can say which of ITS fields
+    // are the ones nobody touches on a first look.
+    // ⭐ Message: the mode selector. The two things anyone came to set are the
+    // number and the words; the mode is a fork most senders never take.
+    const ADVANCED_FIELDS = {
+      URL:     [/^utm/],
+      Message: [/^msgMode$/],
+    };
+    const type = (document.getElementById('qrType') || {}).value || '';
+    const patterns = ADVANCED_FIELDS[type];
+    if (!patterns) return;
+
+    const rows = [...details.querySelectorAll('.fldRow')].filter((row) =>
+      [...row.querySelectorAll('[id]')].some((f) => patterns.some((re) => re.test(f.id))));
     if (!rows.length) return;
 
     const box = document.createElement('details');
@@ -1458,6 +1471,26 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
 
     // Last in the panel, after the caption — it is the thing you reach for least.
     mechPanel.appendChild(box);
+
+    // ⚠️ RESISTBOT IS DECLARED AND UNBUILT. `msgMode` is read by NOTHING — grep it:
+    // both payload builders ignore it, so picking Resistbot today changes no output.
+    // ⛔ A control that silently does nothing is worse than no control, so it is
+    // disabled and says why, rather than being removed: Jacob wants it, and deleting
+    // it would erase the intent (2026-08-29, "resistbot is actually kind of great and
+    // we should just follow through soon"). Wire the builder and drop these lines.
+    try {
+      const mode = document.getElementById('msgMode');
+      if (mode) {
+        [...mode.options].forEach((o) => {
+          if (/resistbot/i.test(o.value || o.textContent)) {
+            o.disabled = true;
+            o.textContent = 'Resistbot — coming soon';
+          }
+        });
+        if (/resistbot/i.test(mode.value || '')) mode.selectedIndex = 0;
+        mode.title = 'Resistbot mode is not wired yet — the payload is the same either way.';
+      }
+    } catch (_e) {}
   }
 
   function codedeskRestructureForEmbed(){
