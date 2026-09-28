@@ -890,7 +890,10 @@ window.codedeskFinishSetup = function codedeskFinishSetup(){
         ? buildSuggestedFilename('png')
         : 'qr.png';
 
-      if (typeof window.downloadPng === 'function') {
+      if (window.CODEDESK_HOST && typeof window.codedeskHostDeliver === 'function') {
+        // Host mode: the finished card goes back to the host (PNG + design); nothing is downloaded or stored.
+        await window.codedeskHostDeliver();
+      } else if (typeof window.downloadPng === 'function') {
         await window.downloadPng(pngFilename);
         console.log('[✨ click] EMBED MODE — PNG downloaded:', pngFilename);
       } else {
@@ -1254,6 +1257,8 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
   // for a bounded number of frames, and gives up quietly rather than spinning.
   function codedeskApplyEmbedLandingState(){
     if (window.__CODEDESK_EMBED_LANDING_APPLIED__) return;
+    // Host mode opens on the host's address, not the portfolio's demo card.
+    if (window.CODEDESK_HOST) return;
 
     const LANDING_URL     = 'www.okQRal.com';
     const MAX_FRAMES      = 60; // ~1s at 60fps; the field appears in the first few

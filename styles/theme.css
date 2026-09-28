@@ -5351,3 +5351,14 @@ body.codedesk-embed-mode #stepper .step-card[data-step="caption"] {
   outline: 2px solid var(--ascend-control-ring, rgba(129, 230, 217, 0.55));
   outline-offset: 2px;
 }
+
+/* ── Host mode (codedesk-host.js): the host's address is the code, and it is not editable.
+   The field shows it read-only and the UTM box is gone — buildText() encodes the address
+   verbatim, so anything typed there would be a lie about what the card says. */
+body.codedesk-address-locked #urlData {
+  opacity: 0.75;
+  cursor: default;
+}
+body.codedesk-address-locked #embedAdvanced {
+  display: none;
+}

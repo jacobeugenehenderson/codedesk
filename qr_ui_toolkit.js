@@ -7,6 +7,8 @@ console.log('[qr_ui_toolkit.js] SCRIPT LOADING... (v2024-DEBUG)');
 // =====================================================
 if (typeof window.buildText !== 'function') {
   window.buildText = function buildText() {
+    // Host mode (codedesk-host.js): the host's address, verbatim — never computed, never altered.
+    if (typeof window.CODEDESK_HOST_ADDRESS === 'string') return window.CODEDESK_HOST_ADDRESS;
     try {
       const sel = document.getElementById('qrType');
       const t = sel ? String(sel.value || '') : '';
@@ -986,6 +988,8 @@ function getTypeFields(type){
 
 // --- Build QR "text" for each Type (simple, pragmatic encoders for preview) ---
 function buildText(){
+    // Host mode (codedesk-host.js): the host's address, verbatim — never computed, never altered (no UTM).
+    if (typeof window.CODEDESK_HOST_ADDRESS === 'string') return window.CODEDESK_HOST_ADDRESS;
     const _typeSel = document.getElementById('qrType');
     const t = _typeSel ? (_typeSel.value || '') : '';
     switch(t){

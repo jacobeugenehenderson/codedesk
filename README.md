@@ -19,9 +19,15 @@ Codedesk was extracted from `ascend-portal` in July 2026, with history:
 that touch Codedesk are all here and the paths are rewritten, so the lineage
 reads correctly from the root.
 
-The original repo is unchanged at
-`git@github.com:jacobeugenehenderson/ascend-portal.git`, and still serves the
-portal. Nothing here pushes back to it.
+**This repo is the one source of truth.** Two other copies exist, and neither is
+edited from here:
+
+| Copy | Status |
+|---|---|
+| `ascend-portal`, `codedesk/` (`git@github.com:jacobeugenehenderson/ascend-portal.git`) | Unchanged; still serves the portal. Another product — whether it moves to a pinned release of this one is Jacob's decision. |
+| The Lafayette Square kit, `public/codedesk/` | An older fork that drifted (all seven shared files differ) and encodes card addresses from its own origin. Mounted only by the kit's frozen old player; **retired with that player at cutover.** Its checks go red until then. |
+
+Nothing here pushes back to either.
 
 **There is one stylesheet.** `styles/theme.css` — everything, in cascade order:
 the portal's `ascend.css`, then its `ascend-apps.css`, then Codedesk's own
@@ -172,6 +178,64 @@ ship unconditionally. The embedding page decides whether to trust the message.
 It is the same file in every embedded product — **do not fork it.** The
 canonical copy is `docs/embed-height.js` in the jacobhenderson.studio repo.
 
+## Hosts — the contract
+
+An app that prints cards (the Ward's QR Studio, for one) frames CodeDesk and tells
+it **the one address the card must encode**. CodeDesk encodes that address verbatim
+and nothing else, the person designs the card around it, and CodeDesk hands the
+finished card back. **CodeDesk stores nothing and holds no town's data** — the host
+keeps what it is given, if it wants it. `codedesk-host.js` is the whole of it.
+
+**Mount** — an iframe on a pinned release (see *Releasing*), in embed mode, naming
+the host's own origin:
+
+```
+<iframe src="https://assets.theward.online/codedesk/v1.0.0/index.html?mode=embed&host=https://lafayette-square.com">
+```
+
+Without `host=`, embed mode is exactly what the portfolio frames: no messages, the
+demo card, ✨ downloads a PNG.
+
+**Messages** — `postMessage`, to and from the declared host origin only, and only
+between the frame and its parent:
+
+| Direction | Message | When |
+|---|---|---|
+| CodeDesk → host | `{ type: 'codedesk:ready', version }` | the Code drawer exists; send `init` now |
+| host → CodeDesk | `{ type: 'codedesk:init', address, caption? }` | once. `address`: absolute `http(s)`; `caption`: the headline, ≤ the field's 20 characters |
+| CodeDesk → host | `{ type: 'codedesk:locked', address }` | the address is the code, read-only, UTM hidden |
+| CodeDesk → host | `{ type: 'codedesk:design', address, design, png }` | on ✨ — `design` is `codedeskExportState()`'s JSON, `png` a data URL |
+| CodeDesk → host | `{ type: 'codedesk:error', reason }` | anything refused, said |
+| CodeDesk → host | `{ type: 'embed-height', height }` | `embed-height.js`, unchanged — size the frame to it |
+
+**The host computes the address, never CodeDesk.** A card printed from a staging
+page must still encode the town's real address, and a printed card cannot be
+updated — so the address comes from the host's knowledge of its own domain, and
+CodeDesk never reads its own origin to build one. An address that is not absolute
+`http(s)`, or a caption longer than the field, is refused with a reason — never
+truncated or repaired.
+
+▶ `node checks/host-contract.mjs` — `location.origin` builds no payload; both
+`buildText()`s return the host's address first; the script order; no town's data.
+
+## Releasing
+
+A release is a **tagged commit, copied whole to the asset host under its tag**, and
+never changed after: `codedesk/<tag>/` on the `theward-assets` bucket, served from
+`assets.theward.online`. A host pins the tag in its own config and moves to a new
+one on purpose. No host serves a copy of its own.
+
+```
+git tag v1.0.0
+./publish.sh --dry     # the files, their sizes, and the URL a host pins
+./publish.sh           # upload (npx wrangler, logged in)
+```
+
+`publish.sh` refuses a dirty tree, an untagged or non-`vX.Y.Z` HEAD, a red
+`host-contract` check, and a tag that is already published. The portfolio embed
+still frames GitHub Pages (`jacobeugenehenderson.github.io/codedesk/`, i.e. the
+tip of `main`); moving it to a pinned release is Jacob's call.
+
 ## Still tethered
 
 Portability here means *independent of ascend-portal*, which is done. Codedesk
@@ -184,7 +248,7 @@ portal:
 | `fonts.googleapis.com` | Display faces. |
 | `cdn.jsdelivr.net` — `emoji-picker-element` | The emoji picker. |
 | `cdnjs.cloudflare.com` — `qrcodejs` | Fallback; `vendor/qrcode.min.js` is local. |
-| `script.google.com/macros/…` | An Apps Script endpoint. A real backend. |
+| `script.google.com/macros/…` | The Drive-backed working files (FileRoom) — **normal mode only**; embed and host modes never call it. |
 
 None of these block extraction and none were touched. Worth knowing before
 anyone calls this offline-capable, and worth revisiting if it should be.
