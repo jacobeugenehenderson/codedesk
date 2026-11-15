@@ -466,7 +466,14 @@ window.codedeskFinishSetup = function codedeskFinishSetup(){
       const finishCard = stepper.querySelector('.step-card[data-step="finish"]');
       if (finishCard) {
         const preferSmooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        finishCard.scrollIntoView({ block: 'start', behavior: preferSmooth ? 'smooth' : 'auto' });
+        const behavior = preferSmooth ? 'smooth' : 'auto';
+        // Framed: our own window only — scrollIntoView() would scroll the host
+        // page too (see the same guard in qr_ui_toolkit.js).
+        if (window.self !== window.top) {
+          window.scrollTo({ top: finishCard.getBoundingClientRect().top + window.scrollY, behavior });
+        } else {
+          finishCard.scrollIntoView({ block: 'start', behavior });
+        }
       }
     }
   } catch(e){}

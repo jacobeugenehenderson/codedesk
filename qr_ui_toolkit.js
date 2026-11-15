@@ -1330,10 +1330,18 @@ window.__okqr_park_handler__ = function (e) {
                 || card;
 
     const preferSmooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    header.scrollIntoView({
-      block: 'start',
-      behavior: preferSmooth ? 'smooth' : 'auto'
-    });
+    const behavior = preferSmooth ? 'smooth' : 'auto';
+    // FRAMED: scroll our own window only. scrollIntoView() also scrolls every
+    // ancestor frame, cross-origin included, so in a frame it dragged the host
+    // page ~300px every time a drawer opened — including the one embed mode
+    // opens on boot. The (max-width: 1279px) test above is always true in a
+    // 1000px frame, which is why it fired there at all. window.scrollTo moves
+    // this document and nothing outside it; unframed, behaviour is unchanged.
+    if (window.self !== window.top) {
+      window.scrollTo({ top: header.getBoundingClientRect().top + window.scrollY, behavior });
+    } else {
+      header.scrollIntoView({ block: 'start', behavior });
+    }
   }, 0);
 };
 
