@@ -1246,9 +1246,8 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
   // =====================================================
   // EMBED MODE: the landing state
   // =====================================================
-  // Embed mode opens on a finished code rather than an empty one, because the
-  // page around it claims the code goes to okqral.com and a blank black-and-
-  // white square makes that page a liar. Caption starts open so the first thing
+  // Embed mode opens on a finished code rather than an empty one: a blank
+  // black-and-white square demonstrates nothing. Caption starts open so the first thing
   // visible is an editable field, not four closed drawers.
   //
   // NO CAPTION IS SEEDED, deliberately (17 Aug 2026). It used to land on
@@ -1267,18 +1266,12 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
     // Host mode opens on the host's address, not the portfolio's demo card.
     if (window.CODEDESK_HOST) return;
 
-    const LANDING_URL     = 'www.okQRal.com';
+    // No URL is seeded: the field opens blank and the code encodes the easter egg
+    // (qr_app-bootstrapper.js). It seeded www.okQRal.com until 2026-11-14, when
+    // that domain lapsed and the portfolio's demo code led to a parked page.
     const MAX_FRAMES      = 60; // ~1s at 60fps; the field appears in the first few
 
     let frames = 0;
-    const setValue = (node, value) => {
-      if (!node || String(node.value || '').trim() !== '') return false;
-      node.value = value;
-      // The app listens for input; assigning .value alone would leave state stale.
-      node.dispatchEvent(new Event('input',  { bubbles: true }));
-      node.dispatchEvent(new Event('change', { bubbles: true }));
-      return true;
-    };
 
     (function attempt(){
       const urlField = document.getElementById('urlData');
@@ -1293,7 +1286,6 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
 
       window.__CODEDESK_EMBED_LANDING_APPLIED__ = true;
 
-      setValue(urlField, LANDING_URL);
       /* #campaign is left EMPTY on purpose — see the note above. */
 
       // -------------------------------------------------------------------
@@ -1304,8 +1296,7 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       // reason the design exists, and it also demonstrates the emoji centre —
       // which the page has claimed for months without ever showing it.
       //
-      // setValue() only fills EMPTY fields, and every one of these ships with a
-      // default, so they need a setter that always writes.
+      // Every one of these ships with a default, so the setter always writes.
       const force = (id, value) => {
         const node = document.getElementById(id);
         if (!node) return;
@@ -1880,7 +1871,11 @@ function buildText(){
 
         // If empty, default to easter egg asset
         const rawTrim = String(raw || "").trim();
-        if (!rawTrim) return "https://ascend.jacobhenderson.studio/codedesk/assets/love.html";
+        if (!rawTrim) {
+          // Embed: the easter egg (qr_app-bootstrapper.js). Elsewhere, unchanged.
+          if (window.CODEDESK_EMBED_MODE === true) return window.CODEDESK_EMBED_BLANK_ADDRESS;
+          return "https://ascend.jacobhenderson.studio/codedesk/assets/love.html";
+        }
 
         // read optional utm fields (support common variants)
         const s = (val("utmSource")   || val("utm_source")   || "").trim();

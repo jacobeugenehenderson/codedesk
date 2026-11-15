@@ -1006,7 +1006,11 @@ function buildText(){
 
         // If empty, export empty (no placeholder payloads)
         const rawTrim = String(raw || "").trim();
-        if (!rawTrim) return "https://jacobhenderson.studio";
+        if (!rawTrim) {
+          // Embed: the easter egg (qr_app-bootstrapper.js). Elsewhere, unchanged.
+          if (window.CODEDESK_EMBED_MODE === true) return window.CODEDESK_EMBED_BLANK_ADDRESS;
+          return "https://jacobhenderson.studio";
+        }
 
         // read optional utm fields (support common variants)
         const s = (val("utmSource")   || val("utm_source")   || "").trim();

@@ -72,6 +72,15 @@ const CODEDESK_BOOTSTRAP_SESSION_KEY = "codedesk_bootstrap_session_v1";
     // unlock path in the codebase rather than a second one to keep in step.
     window.__CODEDESK_FILENAME_ACCEPTED__ = true;
     window.__CODEDESK_SETUP_DONE__ = true;
+
+    // THE EASTER EGG. Framed, the URL field opens BLANK and the code still
+    // encodes something: Jacob's résumé. Nothing on screen says so — scanning it
+    // is how you find out, and it is the one thing a visitor to the portfolio
+    // actually came for. The address is permanent by design (jacobhenderson.studio
+    // README §9: undated filename, never moves). Type a URL and it is yours.
+    // Embed only: in real use a blank field must never quietly encode a CV.
+    window.CODEDESK_EMBED_BLANK_ADDRESS =
+      'https://jacobhenderson.studio/assets/Jacob-Henderson-Resume.pdf';
   }
 
   // Working-file open path (from hopper)
