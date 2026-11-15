@@ -1291,11 +1291,19 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       // -------------------------------------------------------------------
       // THE LANDING DESIGN. Jacob's, built in the app and transcribed here.
       //
-      // Jacob, 2026-11-14: a top hat in the centre, ▪️ modules, antique-gold
-      // rings around burnt-orange centres, on the cream card. It replaced a
+      // Jacob's, set in the app on 2026-11-15 and transcribed here: a top hat in
+      // the centre, ⚫ modules, antique-gold circle rings around ⚫ centres, on a
+      // white card that fades out to transparent at the top. It replaced a
       // western (a cowboy for ok-QR-al, the OK Corral) when okqral.com lapsed
-      // and the code began encoding the résumé instead. It still shows the
-      // emoji centre and emoji modules the portfolio claims.
+      // and the code began encoding the résumé instead.
+      //
+      // MEASURED, not judged by eye: screenshots of the card on its real ground,
+      // decoded with BarcodeDetector at every 10px from 100 to 500 wide —
+      //   this design            34/41, smallest 160px
+      //   the ▪️ top hat before   33/41, smallest 180px
+      //   this, top made opaque  34/41, smallest 130px
+      // Isolated misses occur in all three; this is at least as robust as what
+      // it replaced. Re-decode after changing modules, eyes or the card.
       //
       // Every one of these ships with a default, so the setter always writes.
       const force = (id, value) => {
@@ -1307,52 +1315,44 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       };
       const forceColor = (id, hex) => { force(id, hex); force(id + 'Hex', hex); };
 
-      // modules: ▪️ as EMOJI — emoji as the code itself, not just its ornament.
-      // ⚠ SCALE 1, NOT 0.85. ▪️ is a SMALL square inside its emoji box, so it
-      // already leaves a gap; at 0.85 the code read as scattered dots and
-      // decoded unreliably (failed at 200px and 140px wide). At 1 it decodes
-      // down to 140px, matching the 🟫 design before it (2026-11-14, Chrome
-      // BarcodeDetector on screenshots). 0.85 was right for 🟫, which fills
-      // its cell. Re-decode before shrinking it.
+      // modules: ⚫ as EMOJI — emoji as the code itself, not just its ornament.
+      // Scale 1: a round glyph already leaves gaps between cells.
       //
-      // The three finder patterns stay solid shapes on purpose. A decoder
-      // locates those before it can read anything, so novelty belongs in the
-      // data modules and nowhere near them.
+      // The three finder patterns stay solid rings on purpose. A decoder locates
+      // those before it can read anything.
       //
       // bodyColor is set but unused while the fill is Emoji; it is kept so
-      // switching the fill back to Shape lands on the dun rather than on black.
+      // switching the fill back to Shape lands on a colour rather than on black.
       force('modulesMode',    'Emoji');
-      force('modulesEmoji',   '\u25AA\uFE0F');
+      force('modulesEmoji',   '\u26AB');
       force('moduleShape',    'Rounded');
       force('modulesScale',   '1');
       forceColor('bodyColor', '#3e2f04');
 
-      // eyes: antique-gold rounded rings, burnt-orange centres.
-      // ⚠ The gold is AT the edge. Finder patterns are the first thing a
-      // decoder looks for and want ~3:1. #A67C00 measures 3.00:1 against
-      // jacobhenderson.studio's paper, 3.45:1 on the card's cream and 3.82:1 on
-      // its white top. The card is now opaque, so the rings sit on cream/white,
-      // never on the page. Decoded on 2026-11-14 down to 140px wide. Do not
-      // lighten it, and re-decode after any change to the card's ground.
-      force('eyeRingShape',   'Rounded');
+      // eyes: antique-gold circle rings, ⚫ centres at 1.15.
+      // ⚠ The gold is AT the edge: #A67C00 is 3.00:1 against
+      // jacobhenderson.studio's paper and 3.82:1 on white, where ~3:1 is what a
+      // decoder wants for the finder patterns it looks for first. Do not lighten it.
+      force('eyeRingShape',   'Circle');
       forceColor('eyeRingColor', '#A67C00');
-      force('eyeCenterShape', 'Square');
-      force('eyeCenterMode',  'Shape');
-      forceColor('eyeCenterColor', '#C65A1E');
-      force('eyeCenterScale', '1');
+      force('eyeCenterShape', 'Circle');
+      force('eyeCenterMode',  'Emoji');
+      force('eyeCenterEmoji', '\u26AB');
+      forceColor('eyeCenterColor', '#C65A1E');   // kept for a switch back to Shape
+      force('eyeCenterScale', '1.15');
 
       // the centre
       force('centerMode',     'Emoji');
       force('centerEmoji',    '\u{1F3A9}');
-      force('centerScale',    '1.2');
+      force('centerScale',    '1');
 
-      // White at the top, cream at the foot, BOTH OPAQUE (Jacob, 2026-11-14:
-      // "we can have the gradient go to white"). It used to fade out to
-      // transparent at the top, where two of the three finder patterns sit, so a
-      // code laid on any dark or busy ground lost them. Opaque, every finder has
-      // a solid light ground in the exported PNG as well as on the page.
+      // White, opaque at the foot and fading to TRANSPARENT at the top — Jacob's
+      // setting. Two finder patterns sit in the fade, so on the page they stand on
+      // CodeDesk's light ground; a downloaded PNG dropped on a dark ground will
+      // read worse. Opaque top measured slightly better at the smallest sizes
+      // (130px against 160px) and is the fix if that ever matters.
       force('bgTopColor',     '#ffffff'); force('bgTopHex',    '#ffffff');
-      force('bgBottomColor',  '#fff2db'); force('bgBottomHex', '#fff2db');
+      force('bgBottomColor',  '#ffffff'); force('bgBottomHex', '#ffffff');
 
       // ⚠ UNLINK FIRST OR THE TWO ALPHAS CANNOT DIFFER. The pair is LINKED by
       // default (qr_ui_toolkit.js:660, stored in localStorage) and a linked
@@ -1370,7 +1370,7 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       const bgLink = document.getElementById('bgLink');
       if (bgLink && bgLink.getAttribute('aria-pressed') === 'true') bgLink.click();
 
-      force('bgTopAlpha',     '100'); force('bgTopAlphaNum',  '100');
+      force('bgTopAlpha',     '0');   force('bgTopAlphaNum',    '0');
       force('bgBottomAlpha',  '100'); force('bgBottomAlphaNum', '100');
 
       force('fontFamily',     'Work Sans');
