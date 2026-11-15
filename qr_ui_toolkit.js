@@ -986,6 +986,39 @@ function getTypeFields(type){
   // The bootstrapper will call renderTypeForm after window.manifest is ready.
   window.renderTypeForm = renderTypeForm;
 
+  // --- Swatch <-> hex, for every colour pair but the background ------------
+  // renderTypeForm() has always CALLED window.wireColorHexSync, and nothing
+  // ever defined it — so the call was silently a no-op. The background pair has
+  // its own sync (bindColor, above); caption, body, eye ring and eye centre had
+  // none. colorHex() prefers the hex field whenever it holds a value, so once a
+  // preset or a template filled the hex, picking a colour with the swatch did
+  // NOTHING: the stale hex won every render. Jacob hit it trying to change the
+  // eye ring on 2026-11-14 and had to clear the hex field to get his colour.
+  //
+  // Listeners go on in the CAPTURE phase, so the partner is updated before any
+  // render listener reads it, and the event is left to continue — rendering
+  // stays where it was. Wiring is idempotent: safe to call on every form build.
+  window.wireColorHexSync = function wireColorHexSync(){
+    const PAIRS = ['captionColor', 'bodyColor', 'eyeRingColor', 'eyeCenterColor'];
+    const HEX6  = /^#?[0-9a-f]{6}$/i;
+    PAIRS.forEach(function(id){
+      const sw = document.getElementById(id);
+      const hx = document.getElementById(id + 'Hex');
+      if (!sw || !hx || sw.__hexSyncWired) return;
+      sw.__hexSyncWired = true;
+      const fromSwatch = function(){ hx.value = String(sw.value || '').toUpperCase(); };
+      const fromHex = function(){
+        const v = String(hx.value || '').trim();
+        if (HEX6.test(v)) sw.value = (v[0] === '#' ? v : '#' + v).toLowerCase();
+      };
+      sw.addEventListener('input',  fromSwatch, true);
+      sw.addEventListener('change', fromSwatch, true);
+      hx.addEventListener('input',  fromHex,    true);
+      hx.addEventListener('change', fromHex,    true);
+    });
+  };
+  try { window.wireColorHexSync(); } catch (e) {}
+
 // --- Build QR "text" for each Type (simple, pragmatic encoders for preview) ---
 function buildText(){
     // Host mode (codedesk-host.js): the host's address, verbatim — never computed, never altered (no UTM).
