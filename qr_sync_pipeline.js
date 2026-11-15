@@ -1291,10 +1291,11 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       // -------------------------------------------------------------------
       // THE LANDING DESIGN. Jacob's, built in the app and transcribed here.
       //
-      // It is a western: ok-QR-al is the OK Corral, so the centre of the code
-      // is a cowboy and the palette is dun, ochre and cream. The joke is the
-      // reason the design exists, and it also demonstrates the emoji centre —
-      // which the page has claimed for months without ever showing it.
+      // Jacob, 2026-11-14: a top hat in the centre, ▪️ modules, antique-gold
+      // rings around burnt-orange centres, on the cream card. It replaced a
+      // western (a cowboy for ok-QR-al, the OK Corral) when okqral.com lapsed
+      // and the code began encoding the résumé instead. It still shows the
+      // emoji centre and emoji modules the portfolio claims.
       //
       // Every one of these ships with a default, so the setter always writes.
       const force = (id, value) => {
@@ -1306,50 +1307,50 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       };
       const forceColor = (id, hex) => { force(id, hex); force(id + 'Hex', hex); };
 
-      // modules: brown squares, as EMOJI. This is the headline feature making
-      // the loud version of its own argument — the cowboy is emoji as
-      // ornament, this is emoji as the code itself. 0.85 leaves a gap between
-      // cells so it reads as brickwork rather than a solid field.
+      // modules: ▪️ as EMOJI — emoji as the code itself, not just its ornament.
+      // ⚠ SCALE 1, NOT 0.85. ▪️ is a SMALL square inside its emoji box, so it
+      // already leaves a gap; at 0.85 the code read as scattered dots and
+      // decoded unreliably (failed at 200px and 140px wide). At 1 it decodes
+      // down to 140px, matching the 🟫 design before it (2026-11-14, Chrome
+      // BarcodeDetector on screenshots). 0.85 was right for 🟫, which fills
+      // its cell. Re-decode before shrinking it.
       //
-      // The three finder patterns stay solid ochre shapes on purpose. A decoder
+      // The three finder patterns stay solid shapes on purpose. A decoder
       // locates those before it can read anything, so novelty belongs in the
       // data modules and nowhere near them.
       //
       // bodyColor is set but unused while the fill is Emoji; it is kept so
       // switching the fill back to Shape lands on the dun rather than on black.
       force('modulesMode',    'Emoji');
-      force('modulesEmoji',   '\u{1F7EB}');
+      force('modulesEmoji',   '\u25AA\uFE0F');
       force('moduleShape',    'Rounded');
-      force('modulesScale',   '0.85');
+      force('modulesScale',   '1');
       forceColor('bodyColor', '#3e2f04');
 
-      // eyes: ochre rounded rings, brown discs in the middle.
-      // #8a6604 rather than the #a87d05 this was designed at. Finder patterns
-      // are the first thing a decoder looks for, and the lighter ochre measured
-      // 2.95:1 against jacobhenderson.studio's paper — under the ~3:1 a decoder
-      // wants. This is 4.15:1 there and 4.76:1 on the card's own cream, and it
-      // reads as the same colour. Do not lighten it back without measuring.
+      // eyes: antique-gold rounded rings, burnt-orange centres.
+      // ⚠ The gold is AT the edge. Finder patterns are the first thing a
+      // decoder looks for and want ~3:1. #A67C00 measures 3.00:1 against
+      // jacobhenderson.studio's paper, 3.45:1 on the card's cream and 3.82:1 on
+      // its white top. The card is now opaque, so the rings sit on cream/white,
+      // never on the page. Decoded on 2026-11-14 down to 140px wide. Do not
+      // lighten it, and re-decode after any change to the card's ground.
       force('eyeRingShape',   'Rounded');
-      forceColor('eyeRingColor', '#8a6604');
+      forceColor('eyeRingColor', '#A67C00');
       force('eyeCenterShape', 'Square');
-      force('eyeCenterMode',  'Emoji');
-      force('eyeCenterEmoji', '\u{1F7E4}');
+      force('eyeCenterMode',  'Shape');
+      forceColor('eyeCenterColor', '#C65A1E');
       force('eyeCenterScale', '1');
 
-      // the punchline
+      // the centre
       force('centerMode',     'Emoji');
-      force('centerEmoji',    '\u{1F920}');
+      force('centerEmoji',    '\u{1F3A9}');
       force('centerScale',    '1.2');
 
-      // Opaque cream at the foot, fading OUT to transparent at the top. The
-      // fade is deliberate and it carries into the exported PNG, where two of
-      // the three finder patterns sit — a code dropped on a dark ground will
-      // not scan. Jacob's call, and the consistent one: a tool that promises
-      // your code is yours does not get to choose where you put it.
-      //
-      // The solid end is 100 rather than the 65 it was designed at. That is the
-      // whole of the compromise — the fade stays, the cream underneath it is
-      // fully cream.
+      // White at the top, cream at the foot, BOTH OPAQUE (Jacob, 2026-11-14:
+      // "we can have the gradient go to white"). It used to fade out to
+      // transparent at the top, where two of the three finder patterns sit, so a
+      // code laid on any dark or busy ground lost them. Opaque, every finder has
+      // a solid light ground in the exported PNG as well as on the page.
       force('bgTopColor',     '#ffffff'); force('bgTopHex',    '#ffffff');
       force('bgBottomColor',  '#fff2db'); force('bgBottomHex', '#fff2db');
 
@@ -1369,7 +1370,7 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       const bgLink = document.getElementById('bgLink');
       if (bgLink && bgLink.getAttribute('aria-pressed') === 'true') bgLink.click();
 
-      force('bgTopAlpha',     '0');   force('bgTopAlphaNum',    '0');
+      force('bgTopAlpha',     '100'); force('bgTopAlphaNum',  '100');
       force('bgBottomAlpha',  '100'); force('bgBottomAlphaNum', '100');
 
       force('fontFamily',     'Work Sans');
