@@ -1426,9 +1426,10 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
   // Framed, the four drawers split things that belong together: the URL lived in
   // Mechanicals, the words printed under it lived in Caption, and a visitor had
   // to open two drawers to change the two things they would actually change.
-  // Caption moves in beside the payload, Mechanicals leads, and the UTM
-  // parameters — the only fields here nobody touches on a first look — fold into
-  // an Advanced disclosure rather than being removed.
+  // Caption moves into this drawer, Mechanicals leads, and the fields nobody
+  // touches on a first look — the caption and the UTM parameters — fold into an
+  // Advanced disclosure rather than being removed. (Caption joined them on
+  // 2026-11-16, when the site fixed the frame at 3:2: Jacob.)
   function codedeskGroupAdvancedFields(){
     const details = document.getElementById('detailsPanel');
     const mechPanel = document.querySelector(
@@ -1439,8 +1440,15 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
     // lives outside #detailsPanel so it can sit last, and renderTypeForm empties
     // that panel on every type change, so a surviving box would hold rows that
     // no longer belong to the current type.
+    // Caption lives INSIDE the box (Jacob, 2026-11-16: framed at a fixed 3:2,
+    // the frame cannot spare a second open field), so lift it out before the
+    // stale box goes, or the rebuild would delete it with the box.
+    const cap = document.getElementById('embedCaptionGroup');
     const stale = document.getElementById('embedAdvanced');
-    if (stale) stale.remove();
+    if (stale) {
+      if (cap && stale.contains(cap)) mechPanel.appendChild(cap);
+      stale.remove();
+    }
 
     // ⛔ NAMED PER TYPE, never a positional rule. A general "first field is
     // primary" heuristic would bury the WiFi password and most of a contact card,
@@ -1454,12 +1462,13 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
       Message: [/^msgMode$/],
     };
     const type = (document.getElementById('qrType') || {}).value || '';
-    const patterns = ADVANCED_FIELDS[type];
-    if (!patterns) return;
+    const patterns = ADVANCED_FIELDS[type] || [];
 
     const rows = [...details.querySelectorAll('.fldRow')].filter((row) =>
       [...row.querySelectorAll('[id]')].some((f) => patterns.some((re) => re.test(f.id))));
-    if (!rows.length) return;
+    // A type with no advanced fields of its own (Map) still gets the box: the
+    // caption is in it.
+    if (!rows.length && !cap) return;
 
     const box = document.createElement('details');
     box.id = 'embedAdvanced';
@@ -1471,9 +1480,11 @@ window.codedeskSyncFileRoomNow = async function codedeskSyncFileRoomNow(reason){
     // Safari while looking fine in Chrome.
     box.appendChild(summary);
 
+    // Caption first: of the folded fields it is the one most reached for.
+    if (cap) box.appendChild(cap);
     rows.forEach((row) => box.appendChild(row));
 
-    // Last in the panel, after the caption — it is the thing you reach for least.
+    // Last in the panel, after the payload's own fields.
     mechPanel.appendChild(box);
 
     // ⚠️ RESISTBOT IS DECLARED AND UNBUILT. `msgMode` is read by NOTHING — grep it:

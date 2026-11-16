@@ -5362,3 +5362,69 @@ body.codedesk-address-locked #urlData {
 body.codedesk-address-locked #embedAdvanced {
   display: none;
 }
+
+/* =====================================================================
+   EMBED MODE — the closed app fits the site's fixed 3:2 frame
+   ---------------------------------------------------------------------
+   Jacob (2026-11-16): the frame on jacobhenderson.studio grew every time a
+   drawer opened, so it is now fixed at 3:2 and CodeDesk scrolls inside it.
+   The closed app has to fit that frame (665px at the site's 998px column);
+   it ran to 853px. Three savings, framed only:
+   - the bottom: the stacked layout's 96px "breathing room" under the stepper
+     and its 16px margin exist for a phone held in a hand, not a frame. Most
+     of the 140-odd px of empty grid under Download came from here.
+   - the top: the header is hidden when framed, so the sticky offset that
+     reserves its 56px is zeroed, and main's top padding tightens, which lifts
+     the preview.
+   - Caption folds into Advanced (qr_sync_pipeline.js).
+   ===================================================================== */
+body.codedesk-embed-mode {
+  --header-h: 0px;
+}
+
+body.codedesk-embed-mode main {
+  padding-top: 0.75rem;
+}
+
+body.codedesk-embed-mode #stepper {
+  padding-bottom: 0.75rem;
+  margin-bottom: 0;
+}
+
+/* Inside a fixed frame an open drawer scrolls the app, and the preview went
+   with it: Design hid the very code it was designing. The stacked layout means
+   the preview to stay pinned while drawers slide under it, but its sticky rule
+   names main > section.stage-stick, and the preview is a div. Pinned here,
+   framed only.
+   ⚠ main must stop being a grid for this to work. A grid item's containing
+   block is its own grid AREA, and the preview's area is exactly as tall as the
+   preview, so sticky had no room to stick and scrolled away regardless. Framed,
+   the app is always one column (the site's column is under 1280px), so block
+   flow loses nothing; the stepper's own negative margin and padding still park
+   it under the preview. */
+body.codedesk-embed-mode main { display: block; }
+
+/* ⚠ And html/body must not be scroll containers. The scaffold's
+   overflow-x: hidden quietly turns overflow-y: visible into auto, so body
+   became a scroll container that never scrolls (it is as tall as its content),
+   and the sticky preview pinned itself to THAT, which is to say to nothing.
+   clip hides sideways overflow the same way without making a scroll container. */
+html:has(body.codedesk-embed-mode),
+body.codedesk-embed-mode {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+body.codedesk-embed-mode main > .stage-stick:first-child {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+/* Pinned, the preview's strip is full width but transparent beyond its card,
+   so drawers scrolling under it showed at its sides. It paints the page's own
+   grid instead: inherited down from body through main, with the attachment
+   fixed so the strip's lines land exactly on the page's. */
+body.codedesk-embed-mode { background-attachment: fixed; }
+body.codedesk-embed-mode main,
+body.codedesk-embed-mode main > .stage-stick:first-child { background: inherit; }

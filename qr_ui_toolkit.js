@@ -1374,8 +1374,15 @@ window.__okqr_park_handler__ = function (e) {
     // opens on boot. The (max-width: 1279px) test above is always true in a
     // 1000px frame, which is why it fired there at all. window.scrollTo moves
     // this document and nothing outside it; unframed, behaviour is unchanged.
+    // Framed, the preview is also pinned at the top of the frame
+    // (styles/theme.css, embed mode), so the header parks just BELOW it,
+    // measured off the preview itself. scrollTo ignores scroll-margin, and
+    // --park-offset is tuned for a tall phone: in the site's 665px frame it
+    // works out to 0 and parked the drawer under the code it was designing.
     if (window.self !== window.top) {
-      window.scrollTo({ top: header.getBoundingClientRect().top + window.scrollY, behavior });
+      const pinned = document.querySelector('main > .stage-stick');
+      const under = pinned ? pinned.getBoundingClientRect().height + 8 : 0;
+      window.scrollTo({ top: header.getBoundingClientRect().top + window.scrollY - under, behavior });
     } else {
       header.scrollIntoView({ block: 'start', behavior });
     }
